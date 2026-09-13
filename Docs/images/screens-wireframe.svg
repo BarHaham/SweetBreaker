@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="740" viewBox="0 0 980 740" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect width="980" height="740" fill="#ffffff"/>
+  <text x="20" y="30" font-size="19" font-weight="600" fill="#1b1b1b">Sweet Breaker — screen wireframes (16:9, 1920 × 1080 reference)</text>
+  <text x="20" y="48" font-size="12" fill="#666666">Original planning sketch. Not a screenshot — nothing here is implemented.</text>
+
+  <!-- ============ A: MAIN MENU ============ -->
+  <g transform="translate(20,70)">
+    <rect width="450" height="290" fill="#fdfbf7" stroke="#1b1b1b" stroke-width="2"/>
+    <text x="8" y="-6" font-size="13" font-weight="600" fill="#1b1b1b">1. Main Menu</text>
+
+    <rect x="105" y="30" width="240" height="46" fill="#ffffff" stroke="#8a5a2b" stroke-width="2"/>
+    <text x="225" y="60" font-size="20" font-weight="700" fill="#8a5a2b" text-anchor="middle">SWEET BREAKER</text>
+
+    <rect x="150" y="98" width="150" height="34" fill="#ffffff" stroke="#1b1b1b" stroke-width="1.5"/>
+    <text x="225" y="120" font-size="13" fill="#1b1b1b" text-anchor="middle">PLAY</text>
+    <rect x="150" y="142" width="150" height="34" fill="#ffffff" stroke="#1b1b1b" stroke-width="1.5"/>
+    <text x="225" y="164" font-size="13" fill="#1b1b1b" text-anchor="middle">HOW TO PLAY</text>
+    <rect x="150" y="186" width="150" height="34" fill="#ffffff" stroke="#1b1b1b" stroke-width="1.5"/>
+    <text x="225" y="208" font-size="13" fill="#1b1b1b" text-anchor="middle">QUIT</text>
+
+    <text x="14" y="275" font-size="11" fill="#555555">HIGH SCORE 000000</text>
+    <text x="436" y="275" font-size="10" fill="#999999" text-anchor="end">anchor: bottom-left ↙</text>
+  </g>
+
+  <!-- ============ B: GAMEPLAY HUD ============ -->
+  <g transform="translate(510,70)">
+    <rect width="450" height="290" fill="#fdfbf7" stroke="#1b1b1b" stroke-width="2"/>
+    <text x="8" y="-6" font-size="13" font-weight="600" fill="#1b1b1b">3. Gameplay HUD (during play)</text>
+
+    <!-- hud row -->
+    <line x1="0" y1="30" x2="450" y2="30" stroke="#cccccc" stroke-width="1" stroke-dasharray="4 3"/>
+    <text x="12" y="21" font-size="11" fill="#1b1b1b">SCORE 001250</text>
+    <text x="225" y="21" font-size="11" fill="#555555" text-anchor="middle">HIGH 004300</text>
+    <text x="386" y="21" font-size="11" fill="#1b1b1b" text-anchor="end">LIVES</text>
+    <circle cx="400" cy="17" r="5" fill="#e26d8a" stroke="#1b1b1b"/>
+    <circle cx="415" cy="17" r="5" fill="#e26d8a" stroke="#1b1b1b"/>
+    <circle cx="430" cy="17" r="5" fill="#e26d8a" stroke="#1b1b1b"/>
+    <text x="12" y="10" font-size="8" fill="#999999">↖ anchored top-left</text>
+    <text x="438" y="10" font-size="8" fill="#999999" text-anchor="end">anchored top-right ↗</text>
+
+    <!-- power-up timer bar -->
+    <rect x="12" y="36" width="110" height="7" fill="#ffffff" stroke="#1b1b1b" stroke-width="1"/>
+    <rect x="13" y="37" width="62" height="5" fill="#9ad07f"/>
+    <text x="128" y="43" font-size="9" fill="#555555">power-up remaining (hidden when inactive)</text>
+
+    <!-- brick field -->
+    <g stroke="#1b1b1b" stroke-width="1">
+      <rect x="60" y="62" width="46" height="16" fill="#f6b6c8"/><rect x="110" y="62" width="46" height="16" fill="#f6b6c8"/>
+      <rect x="160" y="62" width="46" height="16" fill="#f6b6c8"/><rect x="210" y="62" width="46" height="16" fill="#f6b6c8"/>
+      <rect x="260" y="62" width="46" height="16" fill="#f6b6c8"/><rect x="310" y="62" width="46" height="16" fill="#f6b6c8"/>
+      <rect x="360" y="62" width="46" height="16" fill="#f6b6c8"/>
+      <rect x="60" y="82" width="46" height="16" fill="#7b4a2d"/><rect x="110" y="82" width="46" height="16" fill="#7b4a2d"/>
+      <rect x="160" y="82" width="46" height="16" fill="#7b4a2d"/><rect x="210" y="82" width="46" height="16" fill="#7b4a2d"/>
+      <rect x="260" y="82" width="46" height="16" fill="#7b4a2d"/><rect x="310" y="82" width="46" height="16" fill="#7b4a2d"/>
+      <rect x="360" y="82" width="46" height="16" fill="#7b4a2d"/>
+      <rect x="110" y="102" width="46" height="16" fill="#f6d06b"/><rect x="160" y="102" width="46" height="16" fill="#f6d06b"/>
+      <rect x="210" y="102" width="46" height="16" fill="#f6d06b"/><rect x="260" y="102" width="46" height="16" fill="#f6d06b"/>
+      <rect x="310" y="102" width="46" height="16" fill="#f6d06b"/>
+    </g>
+    <text x="418" y="74" font-size="9" fill="#555555">one-hit</text>
+    <text x="418" y="94" font-size="9" fill="#555555">two-hit</text>
+
+    <!-- ball, paddle, walls -->
+    <line x1="52" y1="55" x2="52" y2="250" stroke="#999999" stroke-width="2"/>
+    <line x1="414" y1="55" x2="414" y2="250" stroke="#999999" stroke-width="2"/>
+    <line x1="52" y1="55" x2="414" y2="55" stroke="#999999" stroke-width="2"/>
+    <circle cx="200" cy="170" r="6" fill="#ffffff" stroke="#1b1b1b" stroke-width="2"/>
+    <rect x="165" y="232" width="70" height="11" rx="5" fill="#ffffff" stroke="#1b1b1b" stroke-width="2"/>
+    <line x1="52" y1="258" x2="414" y2="258" stroke="#cc4444" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <text x="58" y="271" font-size="9" fill="#cc4444">dead zone trigger — ball below this line costs a life</text>
+    <text x="225" y="200" font-size="10" fill="#555555" text-anchor="middle">"PRESS SPACE TO LAUNCH" (serve state only)</text>
+  </g>
+
+  <!-- ============ C: PAUSE ============ -->
+  <g transform="translate(20,410)">
+    <rect width="450" height="290" fill="#fdfbf7" stroke="#1b1b1b" stroke-width="2"/>
+    <text x="8" y="-6" font-size="13" font-weight="600" fill="#1b1b1b">4. Pause Menu (overlay, Time.timeScale = 0)</text>
+
+    <rect x="0" y="0" width="450" height="290" fill="#1b1b1b" opacity="0.08"/>
+    <text x="225" y="70" font-size="22" font-weight="700" fill="#1b1b1b" text-anchor="middle">PAUSED</text>
+    <rect x="150" y="98" width="150" height="34" fill="#ffffff" stroke="#1b1b1b" stroke-width="1.5"/>
+    <text x="225" y="120" font-size="13" fill="#1b1b1b" text-anchor="middle">RESUME</text>
+    <rect x="150" y="142" width="150" height="34" fill="#ffffff" stroke="#1b1b1b" stroke-width="1.5"/>
+    <text x="225" y="164" font-size="13" fill="#1b1b1b" text-anchor="middle">RESTART RUN</text>
+    <rect x="150" y="186" width="150" height="34" fill="#ffffff" stroke="#1b1b1b" stroke-width="1.5"/>
+    <text x="225" y="208" font-size="13" fill="#1b1b1b" text-anchor="middle">MAIN MENU</text>
+    <text x="225" y="248" font-size="10" fill="#555555" text-anchor="middle">the level stays visible behind the dim panel</text>
+  </g>
+
+  <!-- ============ D: GAME OVER / VICTORY ============ -->
+  <g transform="translate(510,410)">
+    <rect width="450" height="290" fill="#fdfbf7" stroke="#1b1b1b" stroke-width="2"/>
+    <text x="8" y="-6" font-size="13" font-weight="600" fill="#1b1b1b">6 / 7. Game Over and Victory (same layout, different heading)</text>
+
+    <text x="225" y="52" font-size="20" font-weight="700" fill="#1b1b1b" text-anchor="middle">GAME OVER  /  YOU WIN!</text>
+    <text x="225" y="78" font-size="13" fill="#1b1b1b" text-anchor="middle">SCORE 003120</text>
+    <text x="225" y="98" font-size="12" fill="#555555" text-anchor="middle">HIGH SCORE 004300</text>
+    <text x="225" y="120" font-size="12" font-weight="600" fill="#c07a17" text-anchor="middle">NEW HIGH SCORE!  (only when beaten)</text>
+
+    <rect x="150" y="140" width="150" height="34" fill="#ffffff" stroke="#1b1b1b" stroke-width="1.5"/>
+    <text x="225" y="162" font-size="13" fill="#1b1b1b" text-anchor="middle">PLAY AGAIN</text>
+    <rect x="150" y="184" width="150" height="34" fill="#ffffff" stroke="#1b1b1b" stroke-width="1.5"/>
+    <text x="225" y="206" font-size="13" fill="#1b1b1b" text-anchor="middle">MAIN MENU</text>
+    <text x="225" y="252" font-size="10" fill="#555555" text-anchor="middle">0.75 s input lockout before the buttons accept a click</text>
+  </g>
+
+  <text x="20" y="726" font-size="10" fill="#888888">Screen 2 (How to Play) is a plain text panel with a BACK button; screen 5 (Level Clear) is a 1.5 s banner with no buttons. Both are described in GDD §5.</text>
+</svg>

@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="470" viewBox="0 0 960 470" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect width="960" height="470" fill="#ffffff"/>
+  <text x="20" y="28" font-size="18" font-weight="600" fill="#1b1b1b">What we take from Breakout, and what we change</text>
+  <text x="20" y="46" font-size="12" fill="#666666">Original schematic drawn for this document. The left panel is our own diagram of Breakout's layout, not a screenshot of it.</text>
+
+  <!-- LEFT: Breakout -->
+  <g transform="translate(20,70)">
+    <rect width="420" height="330" fill="#111111" stroke="#1b1b1b" stroke-width="2"/>
+    <text x="10" y="-8" font-size="13" font-weight="600" fill="#1b1b1b">Breakout (Atari, 1976) — schematic</text>
+
+    <g stroke="#111111" stroke-width="1">
+      <rect x="30" y="30" width="360" height="16" fill="#cc4a3a"/>
+      <rect x="30" y="48" width="360" height="16" fill="#cc4a3a"/>
+      <rect x="30" y="66" width="360" height="16" fill="#d78a2c"/>
+      <rect x="30" y="84" width="360" height="16" fill="#d78a2c"/>
+      <rect x="30" y="102" width="360" height="16" fill="#4a9b4a"/>
+      <rect x="30" y="120" width="360" height="16" fill="#4a9b4a"/>
+      <rect x="30" y="138" width="360" height="16" fill="#d7c72c"/>
+      <rect x="30" y="156" width="360" height="16" fill="#d7c72c"/>
+    </g>
+    <text x="398" y="42" font-size="9" fill="#dddddd" text-anchor="end">7 pts</text>
+    <text x="398" y="168" font-size="9" fill="#dddddd" text-anchor="end">1 pt</text>
+
+    <circle cx="210" cy="230" r="5" fill="#ffffff"/>
+    <rect x="180" y="290" width="60" height="9" fill="#4a7fd7"/>
+    <text x="210" y="320" font-size="10" fill="#aaaaaa" text-anchor="middle">solid colour rows · score by row colour · 3 turns</text>
+  </g>
+
+  <!-- RIGHT: Sweet Breaker -->
+  <g transform="translate(520,70)">
+    <rect width="420" height="330" fill="#fff4e6" stroke="#1b1b1b" stroke-width="2"/>
+    <text x="10" y="-8" font-size="13" font-weight="600" fill="#1b1b1b">Sweet Breaker — proposed layout</text>
+
+    <g stroke="#1b1b1b" stroke-width="1">
+      <!-- row 1: one-hit candy -->
+      <rect x="40" y="34" width="50" height="18" rx="4" fill="#f6b6c8"/><rect x="95" y="34" width="50" height="18" rx="4" fill="#f6b6c8"/>
+      <rect x="150" y="34" width="50" height="18" rx="4" fill="#f6b6c8"/><rect x="205" y="34" width="50" height="18" rx="4" fill="#f6b6c8"/>
+      <rect x="260" y="34" width="50" height="18" rx="4" fill="#f6b6c8"/><rect x="315" y="34" width="50" height="18" rx="4" fill="#f6b6c8"/>
+      <!-- row 2: two-hit chocolate, intact -->
+      <rect x="40" y="58" width="50" height="18" rx="4" fill="#7b4a2d"/><rect x="95" y="58" width="50" height="18" rx="4" fill="#7b4a2d"/>
+      <rect x="150" y="58" width="50" height="18" rx="4" fill="#7b4a2d"/><rect x="205" y="58" width="50" height="18" rx="4" fill="#7b4a2d"/>
+      <rect x="260" y="58" width="50" height="18" rx="4" fill="#7b4a2d"/><rect x="315" y="58" width="50" height="18" rx="4" fill="#7b4a2d"/>
+      <!-- row 3: two-hit chocolate, cracked -->
+      <rect x="95" y="82" width="50" height="18" rx="4" fill="#a9714b"/>
+      <rect x="150" y="82" width="50" height="18" rx="4" fill="#a9714b"/>
+      <rect x="205" y="82" width="50" height="18" rx="4" fill="#a9714b"/>
+      <rect x="260" y="82" width="50" height="18" rx="4" fill="#a9714b"/>
+    </g>
+    <!-- crack marks on the damaged row -->
+    <g stroke="#3a2415" stroke-width="1.4" fill="none">
+      <path d="M108 84 l6 6 l-4 5 l7 3"/>
+      <path d="M163 84 l6 6 l-4 5 l7 3"/>
+      <path d="M218 84 l6 6 l-4 5 l7 3"/>
+      <path d="M273 84 l6 6 l-4 5 l7 3"/>
+    </g>
+    <text x="378" y="47" font-size="9" fill="#555555">one-hit</text>
+    <text x="378" y="71" font-size="9" fill="#555555">two-hit</text>
+    <text x="378" y="95" font-size="9" fill="#555555">cracked</text>
+
+    <!-- falling power-up -->
+    <rect x="228" y="140" width="26" height="13" rx="6" fill="#9ad07f" stroke="#1b1b1b"/>
+    <text x="262" y="151" font-size="9" fill="#555555">paddle-expansion capsule (the only power-up)</text>
+    <path d="M241 156 l0 14 m-4 -5 l4 5 l4 -5" stroke="#555555" stroke-width="1.2" fill="none"/>
+
+    <circle cx="150" cy="210" r="6" fill="#ffffff" stroke="#1b1b1b" stroke-width="2"/>
+    <path d="M150 210 L110 250" stroke="#cc4444" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <rect x="150" y="290" width="76" height="11" rx="5" fill="#ffffff" stroke="#1b1b1b" stroke-width="2"/>
+    <line x1="188" y1="286" x2="188" y2="305" stroke="#cc4444" stroke-width="1.2" stroke-dasharray="3 3"/>
+    <text x="188" y="284" font-size="8" fill="#cc4444" text-anchor="middle">centre</text>
+    <text x="210" y="320" font-size="10" fill="#555555" text-anchor="middle">hit offset on the paddle sets the outgoing angle — the player aims</text>
+  </g>
+
+  <!-- footer bullets -->
+  <text x="20" y="428" font-size="12" fill="#1b1b1b"><tspan font-weight="600">Adopted:</tspan> paddle + ball + brick wall on one static screen, constant ball speed, offset-based paddle rebound, lives, clear-the-wall goal.</text>
+  <text x="20" y="450" font-size="12" fill="#1b1b1b"><tspan font-weight="600">Changed:</tspan> candy/chocolate presentation, three hand-made layouts instead of eight identical rows, a visible cracked damage state, and exactly one temporary power-up.</text>
+</svg>
