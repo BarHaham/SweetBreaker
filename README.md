@@ -18,7 +18,7 @@ Implementation starts only after the idea and the GDD are approved by the instru
 
 ## Documents
 
-- [Game Design Document](Docs/GDD.md) — the proposal, v0.1
+- [Game Design Document](Docs/SWEETBREAKER_GDD.md) — the proposal, v0.1
 - [Docs/images/](Docs/images/) — original diagrams referenced by the GDD
 
 ## Team
