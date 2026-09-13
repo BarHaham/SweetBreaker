@@ -144,8 +144,8 @@ stateDiagram-v2
   and a new ball enters the serve state. Score, brick damage and the level are untouched. If lives
   reach zero the run ends and the Game Over screen appears instead.
 - **Level transitions.** A level is clear when the last *breakable* brick is destroyed (unbreakable
-  bricks are out of scope for the MVP, but the check is written as "breakable count == 0" so the
-  rule does not have to change if one is ever added). A 1.5 s "LEVEL n CLEAR" banner plays, then
+  bricks are out of scope entirely — see §8.3 — but the check is phrased as "breakable count == 0"
+  rather than "brick count == 0" so the rule states what it means). A 1.5 s "LEVEL n CLEAR" banner plays, then
   the next level's layout is instantiated. **Score carries over. Lives carry over and are not
   refilled.** Any active power-up ends at the transition. After level 3 the run ends in victory.
 - **Power-up.** When any brick is destroyed there is a `powerUpDropChance` (15 %) that a
@@ -266,6 +266,9 @@ reach at `paddleSpeed`. If either fails, `ballSpeed` and `paddleSpeed` are the f
   Pixel Size", "One Resolution Only", "Unanchored UI"); before submission we will check the layout
   at 16:9, 4:3 and an ultrawide ratio from the Game view dropdown.
 - **Text:** TextMeshPro throughout.
+- **Which of these are MVP:** screens 1, 3, 6 and 7 (main menu, HUD, game over, victory) are part
+  of the MVP in §8.1. Screen 2 (How to Play), screen 4 (Pause) and screen 5 (Level Clear) are
+  polish in §8.2, as are the high-score readouts on screens 1, 3, 6 and 7.
 
 ---
 
