@@ -20,7 +20,7 @@ The Unity project will be added to this repository when implementation starts.
 
 ## Documents
 
-- [Game Design Document](Docs/SWEETBREAKER_GDD.md) — v0.2, approved
+- [Game Design Document](Docs/SWEETBREAKER_GDD.md) — v0.3 (idea approved)
 - [Docs/images/](Docs/images/) — original diagrams referenced by the GDD
 
 ## Team

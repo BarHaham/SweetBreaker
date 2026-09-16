@@ -11,9 +11,9 @@
 | **Genre** | Single-player 2D arcade brick-breaker / score-chaser |
 | **Target platform** | PC (Windows) standalone build, keyboard + mouse. A mobile build is not required and is not planned. |
 | **Engine / Unity version** | Unity **6000.3.20f1** (Unity 6.3 LTS), 2D — the exact version required by the course. No other editor version is used. Render pipeline (Built-in 2D vs URP 2D) is decided when the project is created. |
-| **Orientation & reference resolution** | Landscape, 1920 × 1080 reference |
+| **Orientation & reference resolution** | Landscape, 1920 × 1080 reference. Supported aspect ratios: 16:9, 16:10, 4:3 and 21:9 (see §5) |
 | **Expected session length** | 3–6 minutes for a full three-level run (initial estimate) |
-| **Document version** | v0.2 — 2026-09-16 |
+| **Document version** | v0.3 — 2026-09-16 |
 
 ---
 
@@ -183,6 +183,8 @@ first guesses to reach for, not results. Units are Unity world units (u) unless 
 | `serveDelay` | Pause after losing a life before the next serve (also the input lockout) | 1.0 s |
 | `levelClearDelay` | How long the "LEVEL CLEAR" banner holds | 1.5 s |
 | `scoreOneHitBreak` / `scoreTwoHitCrack` / `scoreTwoHitBreak` | The three scoring events | 50 / 25 / 75 |
+| `playFieldSize` | Width × height of the walled play area, walls included; the camera always fits all of it (§5) | 16 × 10 u |
+| `hudBandHeight` | Strip at the top of the play field that the HUD sits over; no brick is placed in it | 1 u |
 
 **Where these live:** a `GameConfig` ScriptableObject asset holds everything in the table, so the
 whole feel can be re-tuned without touching a prefab or recompiling (Session 6's motivation for
@@ -253,8 +255,25 @@ reach at `paddleSpeed`. If either fails, `ballSpeed` and `paddleSpeed` are the f
 - **Canvas setup:** Screen Space – Overlay; `CanvasScaler` set to **Scale With Screen Size**,
   reference resolution **1920 × 1080**, **Match = 0.5**. Every HUD element is anchored to the corner
   it belongs to, not to the centre. This is directly from the Session 7 pitfall list ("Constant
-  Pixel Size", "One Resolution Only", "Unanchored UI"); before submission we will check the layout
-  at 16:9, 4:3 and an ultrawide ratio from the Game view dropdown.
+  Pixel Size", "One Resolution Only", "Unanchored UI").
+- **Camera and play-field fit.** The UI scaling above does not move the game world, so the camera
+  has its own rule. The camera is orthographic and its size is set so that the **whole play field,
+  both side walls included, is always visible**:
+  `orthographicSize = max(playFieldHeight / 2, (playFieldWidth / 2) / aspect)`.
+  On a wider screen (21:9) the extra width shows background at the sides; on a narrower one (4:3)
+  the extra height shows background above and below. The play field is never cropped, which is
+  what pillar 1 requires. The fit is recalculated whenever `Screen.width` or `Screen.height`
+  changes, so switching between fullscreen and windowed stays correct.
+- **HUD band.** The top `hudBandHeight` of the play field holds no bricks, so the corner-anchored
+  HUD never covers a brick or the ball's path at any supported aspect ratio.
+- **Mouse control at any size.** The cursor position is converted to world space through the
+  camera (`ScreenToWorldPoint`), never read as raw pixels, so mouse control of the paddle lines up
+  at every resolution.
+- **Window mode.** The Windows build opens in **Fullscreen Window** at the desktop's native
+  resolution. `Alt+Enter` switches to windowed mode (the Player Settings fullscreen-switch option).
+- **Supported aspect ratios.** 16:9, 16:10, 4:3 and 21:9. Each one is checked in a real Windows
+  build, not only in the Game view, before submission: the whole play field is visible, the
+  background has no empty strips, the HUD sits in its corners, and the menu buttons stay on screen.
 - **Text:** TextMeshPro throughout.
 - **Which of these are MVP:** screens 1, 3, 6 and 7 (main menu, HUD, game over, victory) are part
   of the MVP in §8.1. Screen 2 (How to Play), screen 4 (Pause) and screen 5 (Level Clear) are
@@ -301,6 +320,12 @@ made public, every unverified asset would be replaced first.
 borders set in the Sprite Editor so the power-up changes `Size` and never `Scale` — the Session 7
 "no 9-slice" pitfall, which would otherwise smear the paddle's rounded ends. Sorting layers, back
 to front: `Background → Bricks → PowerUps → Ball → Paddle → VFX → UI`.
+
+**Background size rule.** The background must fill the screen at every supported aspect ratio.
+With a 16 × 10 u play field, the widest view is 21:9 (about 23.3 × 10 u) and the tallest is 4:3
+(16 × 12 u), so the background is authored at **at least 24 × 12 u — 2400 × 1200 px at 100 PPU** —
+and centred on the play field. The edges are plain enough that the part cropped on a given
+screen does not matter.
 
 ---
 
@@ -352,6 +377,7 @@ graph TD
 | `PowerUpSpawner` | Rolls the drop chance on a brick's destruction and spawns at most one capsule |
 | `PowerUpPickup` | Falls, detects the paddle, and runs the expansion's timed effect |
 | `DeadZone` | Detects the ball leaving the play area and reports it |
+| `CameraFitter` | Sets the camera size so the whole play field fits the current aspect ratio |
 | `UIManager` | Shows and hides the screens and updates the HUD values |
 | `AudioManager` | Plays one-shot SFX on request |
 | `HighScoreStore` | Reads and writes the single high-score integer |
@@ -417,6 +443,8 @@ and Addressables or any asset-streaming system (there are three level prefabs).
 - [ ] Score, and three lives with the life-loss reset
 - [ ] Main menu, game-over screen, victory screen, and a working restart
 - [ ] Win when the level is cleared; lose when lives reach zero
+- [ ] Camera fit and background size rule from §5–§6, with the HUD anchored to its corners
+- [ ] A Windows build checked at 16:9, 16:10, 4:3 and 21:9, fullscreen and windowed
 
 ### 8.2 Polish — if the MVP is done and playable
 
@@ -427,7 +455,6 @@ and Addressables or any asset-streaming system (there are three level prefabs).
 - [ ] Sound effects for bounce, crack, break, pickup, life lost and level clear
 - [ ] Brick-break particle feedback, via the object pool
 - [ ] Local high score saved with PlayerPrefs
-- [ ] A resolution pass: 16:9, 4:3 and ultrawide checked from the Game view
 
 ### 8.3 Explicitly out of scope — we are **not** building these
 
@@ -444,6 +471,7 @@ and Addressables or any asset-streaming system (there are three level prefabs).
 - A save system beyond the single `PlayerPrefs` high-score integer
 - Animator-driven animation, cutscenes, story, or dialogue
 - A mobile build or touch controls — not required for this project
+- A macOS build — the only target is Windows
 
 ---
 
@@ -453,6 +481,7 @@ and Addressables or any asset-streaming system (there are three level prefabs).
 |---|---|---|
 | v0.1 | 2026-09-13 | Initial proposal, written for instructor review before any implementation. Nothing built yet. |
 | v0.2 | 2026-09-16 | Idea approved by the instructor. Applied the instructor's clarifications: submission deadline 2026-10-04, no mobile build required, exact Unity version 6000.3.20f1. Removed the resolved open questions. |
+| v0.3 | 2026-09-16 | Following the instructor's note that each platform must adapt to different screen sizes: added the camera-fit rule, HUD band, background size rule, window mode and the list of supported aspect ratios; added `CameraFitter`; moved the screen-size check from Polish into the MVP; stated that macOS is not a target. |
 
 ---
 
