@@ -1,19 +1,19 @@
 # Game Design Document — *Sweet Breaker*
 
-> **Status: proposal.** Nothing in this document has been implemented, tested or approved.
+> **Status: approved by the instructor. Implementation has not started yet.**
 > Every number below is an initial design estimate, not a measured result.
-> Implementation begins only after the instructor approves the idea and this document.
+> **Submission deadline: 2026-10-04.**
 
 | | |
 |---|---|
 | **Working title** | Sweet Breaker |
 | **Team** | Bar Haham (gameplay programming, physics & tuning), Yuval Rauser (UI, levels, audio & art integration) — provisional split, to be confirmed between us |
 | **Genre** | Single-player 2D arcade brick-breaker / score-chaser |
-| **Target platform** | PC (Windows) standalone build, keyboard + mouse. See §4 for the open mobile question. |
-| **Engine / Unity version** | Unity 6.3 LTS, 2D. Session 1 states the version as `60000.3.20f1`, "don't go lower", and forbids Unity 6.4 and 6.5. We read that as the Unity 6.3 LTS line; the exact editor build we install is **to be confirmed** against the Hub once we start. Render pipeline (Built-in 2D vs URP 2D) **to be confirmed**. |
+| **Target platform** | PC (Windows) standalone build, keyboard + mouse. A mobile build is not required and is not planned. |
+| **Engine / Unity version** | Unity **6000.3.20f1** (Unity 6.3 LTS), 2D — the exact version required by the course. No other editor version is used. Render pipeline (Built-in 2D vs URP 2D) is decided when the project is created. |
 | **Orientation & reference resolution** | Landscape, 1920 × 1080 reference |
 | **Expected session length** | 3–6 minutes for a full three-level run (initial estimate) |
-| **Document version** | v0.1 — 2026-09-13 |
+| **Document version** | v0.2 — 2026-09-16 |
 
 ---
 
@@ -202,7 +202,7 @@ reach at `paddleSpeed`. If either fails, `ballSpeed` and `paddleSpeed` are the f
 
 | Action | Keyboard / Mouse | Gamepad | Touch |
 |---|---|---|---|
-| Move paddle | `A` / `D` or `←` / `→`; or move the mouse (paddle follows cursor X) | Not planned | Not planned — see the open question below |
+| Move paddle | `A` / `D` or `←` / `→`; or move the mouse (paddle follows cursor X) | Not planned | Not planned — no mobile build |
 | Launch ball | `Space` or Left Mouse Button | Not planned | Not planned |
 | Pause / resume | `Esc` or `P` | Not planned | Not planned |
 | Confirm menu button | `Enter` or Left Mouse Button | Not planned | Not planned |
@@ -221,17 +221,7 @@ reach at `paddleSpeed`. If either fails, `ballSpeed` and `paddleSpeed` are the f
 - **On focus loss:** `OnApplicationFocus(false)` during play auto-pauses the game. Alt-tabbing away
   must never cost a life.
 - **Planned input API:** the legacy Input Manager (`Input.GetKeyDown`, `Input.GetAxis`) as taught in
-  Session 2 — it is enough for one axis and three buttons. If mobile turns out to be required, we
-  would move to the Input System package and the on-screen controls from Session 7 instead.
-
-> **Open question for the instructor — mobile.** Session 6 lists the expected concepts as "object
-> pools, coroutines, singletons, compile to mobile… **at least some** of the concepts that we
-> learned here", and Session 7 taught the Android build pipeline. We read "at least some" as making
-> the mobile build *optional*, so we are planning **Windows desktop first**. We are not treating
-> mobile as mandatory on our own initiative, and we are not silently dropping it either — we would
-> like this confirmed. If a mobile build is required, the design changes we already know about are:
-> a portrait or landscape decision, an on-screen drag area replacing the keyboard, and a
-> 1080 × 1920 Canvas reference resolution.
+  Session 2 — it is enough for one axis and three buttons.
 
 ---
 
@@ -410,7 +400,8 @@ graph TD
 
 Features taught in the course that we are **not** using, and why: Animator state machines (the
 brick damage state is a sprite swap and a particle burst — an Animator would be ceremony around two
-sprites), the new Input System (one axis and three buttons; revisited only if mobile is required),
+sprites), the new Input System (one axis and three buttons do not need it), mobile builds and on-screen
+controls (not required for this project),
 and Addressables or any asset-streaming system (there are three level prefabs).
 
 ---
@@ -452,7 +443,7 @@ and Addressables or any asset-streaming system (there are three level prefabs).
 - Additional game modes, difficulty settings, endless mode, or a level-select screen
 - A save system beyond the single `PlayerPrefs` high-score integer
 - Animator-driven animation, cutscenes, story, or dialogue
-- A mobile build — **unless the instructor confirms it is required** (see the open question in §4)
+- A mobile build or touch controls — not required for this project
 
 ---
 
@@ -461,28 +452,12 @@ and Addressables or any asset-streaming system (there are three level prefabs).
 | Version | Date | Change |
 |---|---|---|
 | v0.1 | 2026-09-13 | Initial proposal, written for instructor review before any implementation. Nothing built yet. |
+| v0.2 | 2026-09-16 | Idea approved by the instructor. Applied the instructor's clarifications: submission deadline 2026-10-04, no mobile build required, exact Unity version 6000.3.20f1. Removed the resolved open questions. |
 
 ---
 
-## Appendix — outstanding items and questions for the instructor
+## Appendix — open items
 
-Recorded here rather than guessed at.
-
-1. **Mobile build — required or optional?** See §4. We are planning Windows desktop first on the
-   reading that Session 6 says "at least some" of the listed concepts.
-2. **Submission deadline.** Session 6 gives "Until 19.10 (!)" and marks it **[TBD]**, and marks the
-   approval process **[TBD]** as well. We have not treated either as final.
-3. **Approval route.** Session 6 says to "Fill the Excel with readable GDD" and wait for idea
-   approval before starting. We have not been given the Excel; please tell us where to submit this
-   document and how approval will be communicated.
-4. **`RUBRIC.md` was not reviewed.** The GDD template links to `RUBRIC.md`, but that file was not
-   supplied to us and we have not seen its contents. We have written this document against the
-   template's own instructions and against the grading split given in Session 6 (40 % project
-   sanity & playability, 20 % code readability, 20 % implemented patterns, 20 % WOW factor). If the
-   rubric asks for anything else, we will revise.
-5. **Reference image.** See §2 — the licensed or self-captured *Breakout* reference image is still
-   outstanding.
-6. **Exact Unity build.** Session 1 writes the version as `60000.3.20f1`; we have assumed the
-   Unity 6.3 LTS line and will confirm the exact build in the Hub before starting.
-7. **Team confirmation.** Session 1 permits pairs for the end project. This proposal is submitted by
-   Bar Haham and Yuval Rauser as a pair; the role split in the header is provisional.
+1. **Reference image.** See §2 — a self-captured or properly licensed *Breakout* screenshot is
+   still to be added.
+2. **Render pipeline.** Built-in 2D or URP 2D, chosen when the Unity project is created.

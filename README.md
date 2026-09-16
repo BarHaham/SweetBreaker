@@ -4,7 +4,9 @@ A single-player 2D arcade brick-breaker. The player slides a paddle along the bo
 screen and bounces a ball into a wall of candy and chocolate bricks. Breaking bricks scores
 points, missing the ball costs a life, and clearing every level wins the run.
 
-**Status: Pre-production — awaiting instructor approval. No gameplay implementation yet.**
+**Status: Idea and GDD approved by the instructor. Implementation has not started yet.**
+
+Submission deadline: 2026-10-04. Engine: Unity 6000.3.20f1. Platform: Windows.
 
 ## What is in this repository
 
@@ -14,11 +16,11 @@ Game Design Document and the diagrams that go with it, which is what the final e
 for before implementation may begin ("write a GDD and get it approved before starting the
 implementation", Session 6).
 
-Implementation starts only after the idea and the GDD are approved by the instructor.
+The Unity project will be added to this repository when implementation starts.
 
 ## Documents
 
-- [Game Design Document](Docs/SWEETBREAKER_GDD.md) — the proposal, v0.1
+- [Game Design Document](Docs/SWEETBREAKER_GDD.md) — v0.2, approved
 - [Docs/images/](Docs/images/) — original diagrams referenced by the GDD
 
 ## Team
