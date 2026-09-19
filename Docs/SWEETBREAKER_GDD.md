@@ -13,7 +13,7 @@
 | **Engine / Unity version** | Unity **6000.3.20f1** (Unity 6.3 LTS), 2D — the exact version required by the course. No other editor version is used. Render pipeline (Built-in 2D vs URP 2D) is decided when the project is created. |
 | **Orientation & reference resolution** | Landscape, 1920 × 1080 reference. Supported aspect ratios: 16:9, 16:10, 4:3 and 21:9 (see §5) |
 | **Expected session length** | 3–6 minutes for a full three-level run (initial estimate) |
-| **Document version** | v0.3 — 2026-09-16 |
+| **Document version** | v0.4 — 2026-09-19 |
 
 ---
 
@@ -223,7 +223,7 @@ reach at `paddleSpeed`. If either fails, `ballSpeed` and `paddleSpeed` are the f
 - **On focus loss:** `OnApplicationFocus(false)` during play auto-pauses the game. Alt-tabbing away
   must never cost a life.
 - **Planned input API:** the legacy Input Manager (`Input.GetKeyDown`, `Input.GetAxis`) as taught in
-  Session 2 — it is enough for one axis and three buttons.
+  Session 2 — it is enough for one axis and three buttons. The Unity 6 Universal 2D template enables only the new Input System, so the project sets **Active Input Handling** to **Both** in Player Settings, which keeps these calls working.
 
 ---
 
@@ -482,6 +482,7 @@ and Addressables or any asset-streaming system (there are three level prefabs).
 | v0.1 | 2026-09-13 | Initial proposal, written for instructor review before any implementation. Nothing built yet. |
 | v0.2 | 2026-09-16 | Idea approved by the instructor. Applied the instructor's clarifications: submission deadline 2026-10-04, no mobile build required, exact Unity version 6000.3.20f1. Removed the resolved open questions. |
 | v0.3 | 2026-09-16 | Following the instructor's note that each platform must adapt to different screen sizes: added the camera-fit rule, HUD band, background size rule, window mode and the list of supported aspect ratios; added `CameraFitter`; moved the screen-size check from Polish into the MVP; stated that macOS is not a target. |
+| v0.4 | 2026-09-19 | Unity project created from the Universal 2D template (URP, 6000.3.20f1). Set Active Input Handling to Both so the legacy Input Manager in §4 actually works. |
 
 ---
 
