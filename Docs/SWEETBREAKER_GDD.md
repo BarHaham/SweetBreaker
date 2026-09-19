@@ -101,6 +101,9 @@ stateDiagram-v2
     Victory --> MainMenu: Main Menu
 ```
 
+**This section describes the finished game.** Which parts land in the MVP and which are polish is
+settled in §8, not here.
+
 **Moment-to-moment rules** — the things that are true every frame:
 
 - **Paddle movement.** The paddle moves on the horizontal axis only, at a fixed Y. It never
@@ -364,6 +367,8 @@ graph TD
     CFG -.-> PC
     CFG -.-> PS
     CFG -.-> GM
+    CFG -.-> CF
+    CF["CameraFitter<br/>fits the play field to the screen aspect"]
     LVL["LevelDefinition ×3<br/>ScriptableObject"] -.-> LM
 ```
 
