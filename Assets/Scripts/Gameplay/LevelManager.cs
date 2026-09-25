@@ -41,7 +41,7 @@ namespace SweetBreaker
 
             // "Breakable count == 0" rather than "brick count == 0", as GDD section 3 phrases it.
             if (breakablesLeft == 0)
-                Debug.Log("Level cleared");
+                GameManager.Instance.CompleteLevel();
         }
     }
 }

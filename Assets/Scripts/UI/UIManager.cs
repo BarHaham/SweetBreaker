@@ -1,5 +1,7 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace SweetBreaker
@@ -9,11 +11,27 @@ namespace SweetBreaker
     /// </summary>
     public class UIManager : MonoBehaviour
     {
+        // Stops the panicked click that follows a lost ball from pressing a button (GDD section 4).
+        private const float EndScreenInputLockout = 0.75f;
+
         [Header("HUD")]
         [SerializeField] private TMP_Text scoreText;
         [SerializeField, Tooltip("One candy per life, removed from the last one down.")]
         private Image[] lifeIcons;
         [SerializeField] private GameObject servePrompt;
+
+        [Header("Game Over / Victory (one layout, two headings)")]
+        [SerializeField] private GameObject endScreen;
+        [SerializeField] private TMP_Text endHeading;
+        [SerializeField] private TMP_Text finalScoreText;
+        [SerializeField] private Button playAgainButton;
+        [SerializeField] private Button endMainMenuButton;
+
+        private void Awake()
+        {
+            playAgainButton.onClick.AddListener(() => GameManager.Instance.StartNewRun());
+            endMainMenuButton.onClick.AddListener(() => GameManager.Instance.ReturnToMainMenu());
+        }
 
         private void OnEnable()
         {
@@ -43,6 +61,13 @@ namespace SweetBreaker
         private void HandleStateChanged(GameState state)
         {
             servePrompt.SetActive(state == GameState.Serve);
+
+            if (state == GameState.GameOver)
+                ShowEndScreen("GAME OVER");
+            else if (state == GameState.Victory)
+                ShowEndScreen("YOU WIN!");
+            else
+                endScreen.SetActive(false);
         }
 
         private void ShowScore(int score)
@@ -54,6 +79,27 @@ namespace SweetBreaker
         {
             for (int i = 0; i < lifeIcons.Length; i++)
                 lifeIcons[i].enabled = i < lives;
+        }
+
+        private void ShowEndScreen(string heading)
+        {
+            endHeading.text = heading;
+            finalScoreText.text = $"SCORE  {GameManager.Instance.Score}";
+            endScreen.SetActive(true);
+            StartCoroutine(UnlockEndScreenButtons());
+        }
+
+        private IEnumerator UnlockEndScreenButtons()
+        {
+            playAgainButton.interactable = false;
+            endMainMenuButton.interactable = false;
+            EventSystem.current.SetSelectedGameObject(null);
+
+            yield return new WaitForSecondsRealtime(EndScreenInputLockout);
+
+            playAgainButton.interactable = true;
+            endMainMenuButton.interactable = true;
+            EventSystem.current.SetSelectedGameObject(playAgainButton.gameObject);
         }
     }
 }

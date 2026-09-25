@@ -14,6 +14,7 @@ namespace SweetBreaker
     [DefaultExecutionOrder(-100)]
     public class GameManager : MonoBehaviour
     {
+        public const string MainMenuSceneName = "MainMenu";
         public const string GameSceneName = "Game";
 
         public static GameManager Instance { get; private set; }
@@ -61,6 +62,18 @@ namespace SweetBreaker
             Instance = null;
         }
 
+        /// <summary>PLAY, PLAY AGAIN and RESTART RUN: score 0, full lives, level 1.</summary>
+        public void StartNewRun()
+        {
+            ResetRun();
+            SceneManager.LoadScene(GameSceneName);
+        }
+
+        public void ReturnToMainMenu()
+        {
+            SceneManager.LoadScene(MainMenuSceneName);
+        }
+
         /// <summary>Score only ever goes up (GDD section 3).</summary>
         public void AddScore(int points)
         {
@@ -96,6 +109,13 @@ namespace SweetBreaker
                 serveRoutine = StartCoroutine(ServeAfterDelay());
         }
 
+        /// <summary>The last breakable brick is gone. With one level, clearing it wins the run.</summary>
+        public void CompleteLevel()
+        {
+            if (State == GameState.Playing)
+                SetState(GameState.Victory);
+        }
+
         private IEnumerator ServeAfterDelay()
         {
             yield return new WaitForSeconds(config.ServeDelay);
@@ -105,6 +125,9 @@ namespace SweetBreaker
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
+            // Nothing timed may carry over from the scene that was just unloaded.
+            StopAllCoroutines();
+            serveRoutine = null;
             SetState(scene.name == GameSceneName ? GameState.Serve : GameState.MainMenu);
         }
 
