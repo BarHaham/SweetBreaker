@@ -13,7 +13,7 @@
 | **Engine / Unity version** | Unity **6000.3.20f1** (Unity 6.3 LTS), 2D — the exact version required by the course. No other editor version is used. Render pipeline (Built-in 2D vs URP 2D) is decided when the project is created. |
 | **Orientation & reference resolution** | Landscape, 1920 × 1080 reference. Supported aspect ratios: 16:9, 16:10, 4:3 and 21:9 (see §5) |
 | **Expected session length** | 3–6 minutes for a full three-level run (initial estimate) |
-| **Document version** | v0.4 — 2026-09-19 |
+| **Document version** | v0.5 — 2026-09-25 |
 
 ---
 
@@ -30,7 +30,8 @@ every life and the run ends.
 
 1. **One screen, no surprises.** Everything that decides a rally is on screen at all times: the
    ball, the paddle, the bricks and the walls. This rules out moving or spawning bricks, screen
-   scrolling, camera shake that hides the ball, off-screen hazards, and anything that enters the
+   scrolling, camera shake big enough to hide the ball (the impact shake in §6 is capped at
+   `screenShakeMagnitude`, far inside the camera margin), off-screen hazards, and anything that enters the
    play area from outside the player's view.
 2. **Every miss is the player's miss.** The ball's speed is constant and its rebound is a pure
    function of where it struck the paddle — no randomised angles, no speed ramp, no rubber-banding.
@@ -188,6 +189,12 @@ first guesses to reach for, not results. Units are Unity world units (u) unless 
 | `scoreOneHitBreak` / `scoreTwoHitCrack` / `scoreTwoHitBreak` | The three scoring events | 50 / 25 / 75 |
 | `playFieldSize` | Width × height of the walled play area, walls included; the camera always fits all of it (§5) | 16 × 10 u |
 | `hudBandHeight` | Strip at the top of the play field that the HUD sits over; no brick is placed in it | 1 u |
+| `hitStopDuration` | How long the game freezes on a brick break — the weight of the hit | 0.05 s |
+| `screenShakeDuration` | How long the camera shakes after a break | 0.12 s |
+| `screenShakeMagnitude` | How far the camera moves while shaking; capped so the play field never leaves the view | 0.15 u |
+| `paddleSquashDuration` | How long the paddle squashes after the ball hits it | 0.10 s |
+| `lastBrickSlowMoScale` | Time scale while the final brick of a level is being cleared | 0.35 |
+| `lastBrickSlowMoDuration` | How long that slow motion lasts, in real seconds | 0.8 s |
 
 **Where these live:** a `GameConfig` ScriptableObject asset holds everything in the table, so the
 whole feel can be re-tuned without touching a prefab or recompiling (Session 6's motivation for
@@ -307,6 +314,7 @@ at the moment each one is actually chosen — an empty licence cell is an honest
 | Power-up capsule sprite | 1 | To be decided | Paddle expansion pickup | Proposed |
 | Background | 1 | To be decided | Play area backdrop | Proposed |
 | Brick-break particle | 1 small burst | Unity built-in particle system, own material | Break feedback | Proposed |
+| Chocolate / candy shard sprites | 3 shapes × 2 palettes | To be decided — own art | Pooled break fragments | Proposed |
 | UI font | 1 rounded display face | To be decided — licence must permit redistribution | All screens | Proposed |
 | SFX: paddle bounce, wall bounce, brick crack, brick break, power-up pickup, life lost, level clear, game over | 8 one-shots | Candidate libraries from Session 5: [freesound.org](https://freesound.org/), [pixabay sound effects](https://pixabay.com/sound-effects/) — per-clip licence to be recorded when chosen; CC0 preferred | Feedback | Proposed |
 | Music | 1 short loop, menu only | To be decided; may be cut | Menu ambience | Proposed, low priority |
@@ -323,6 +331,28 @@ made public, every unverified asset would be replaced first.
 borders set in the Sprite Editor so the power-up changes `Size` and never `Scale` — the Session 7
 "no 9-slice" pitfall, which would otherwise smear the paddle's rounded ends. Sorting layers, back
 to front: `Background → Bricks → PowerUps → Ball → Paddle → VFX → UI`.
+
+**Impact feedback (the game's one showpiece).** Breaking a brick is the action the player repeats
+hundreds of times, so it is the one moment worth making expensive-feeling. Four things fire together:
+
+- **Hit-stop.** The game freezes for `hitStopDuration` at the moment of the break. This is what makes
+  a hit feel like it landed rather than like the brick simply vanished.
+- **Screen shake.** A short decaying camera offset, bounded by `screenShakeMagnitude`. The bound is a
+  design rule, not a preference: pillar 1 says the play field is always visible, and the camera fit in
+  §5 leaves margin at every supported aspect ratio, so the shake stays inside it.
+- **Chocolate shards.** Pooled sprite fragments thrown outward from the break point, which fall under
+  gravity and fade. Candy bricks throw bright fragments, chocolate bricks throw dark ones.
+- **Paddle squash.** The paddle briefly squashes on the ball's contact, so the rebound reads as a hit
+  rather than a teleport.
+
+**Last brick slow motion.** When the last breakable brick of a level is destroyed, time drops to
+`lastBrickSlowMoScale` for `lastBrickSlowMoDuration` before the level-clear banner, so the level ends
+on a beat instead of stopping dead.
+
+**Interaction with pause.** Pause also sets `Time.timeScale` to 0, so hit-stop and slow motion are
+driven by coroutines that use **unscaled** time and restore the time scale through `GameManager`,
+never by writing `Time.timeScale = 1` directly. Otherwise a break during the frame the player pauses
+would silently un-pause the game.
 
 **Background size rule.** The background must fill the screen at every supported aspect ratio.
 With a 16 × 10 u play field, the widest view is 21:9 (about 23.3 × 10 u) and the tallest is 4:3
@@ -383,6 +413,7 @@ graph TD
 | `PowerUpPickup` | Falls, detects the paddle, and runs the expansion's timed effect |
 | `DeadZone` | Detects the ball leaving the play area and reports it |
 | `CameraFitter` | Sets the camera size so the whole play field fits the current aspect ratio |
+| `ImpactFeedback` | Runs the hit-stop, screen shake, paddle squash and slow motion from §6 |
 | `UIManager` | Shows and hides the screens and updates the HUD values |
 | `AudioManager` | Plays one-shot SFX on request |
 | `HighScoreStore` | Reads and writes the single high-score integer |
@@ -405,14 +436,15 @@ graph TD
    playing, and how many lives are left?", and they live in a scene that is loaded and unloaded. An
    Inspector reference would break on scene load; `FindObjectOfType` is the error-prone alternative
    Session 3 warns about.
-3. **Coroutines** — three places: the `serveDelay` countdown after a life is lost, the
-   `levelClearDelay` banner, and the power-up's `powerUpDuration` timer. *Why here:* the power-up in
+3. **Coroutines** — the `serveDelay` countdown after a life is lost, the `levelClearDelay` banner,
+   the power-up's `powerUpDuration` timer, and every part of the impact pack in §6: hit-stop,
+   the decaying screen shake, the paddle squash and the last-brick slow motion. *Why here:* the power-up in
    particular needs to expire on a wall clock while the rally continues, and a coroutine held in a
    field can be `StopCoroutine`-ed the instant the player loses a life — which is exactly the
    cancel semantics the reset rule in §3 needs. A timer counted down inside `Update` would end up
    duplicated in three scripts.
-4. **Object pooling** — the brick-break particle burst, via `UnityEngine.Pool.ObjectPool<T>` with
-   an initial size of 8. *Why here:* a level holds roughly 40 bricks and a good rally can destroy
+4. **Object pooling** — the brick-break particle burst **and the chocolate shards** from §6, via
+   `UnityEngine.Pool.ObjectPool<T>`; 8 bursts and 48 shards. *Why here:* a level holds roughly 40 bricks and a good rally can destroy
    several within a second, so this is the one object in the game that is created and destroyed
    repeatedly during play — which makes it the honest place for the pattern. We have not profiled
    anything and are not claiming a measured frame-rate win; the pool is cheap, it is the correct
@@ -459,6 +491,8 @@ and Addressables or any asset-streaming system (there are three level prefabs).
 - [ ] Pause menu
 - [ ] Sound effects for bounce, crack, break, pickup, life lost and level clear
 - [ ] Brick-break particle feedback, via the object pool
+- [ ] The impact pack from §6: hit-stop, screen shake, pooled shards, paddle squash
+- [ ] Last-brick slow motion on level clear
 - [ ] Local high score saved with PlayerPrefs
 
 ### 8.3 Explicitly out of scope — we are **not** building these
@@ -488,6 +522,7 @@ and Addressables or any asset-streaming system (there are three level prefabs).
 | v0.2 | 2026-09-16 | Idea approved by the instructor. Applied the instructor's clarifications: submission deadline 2026-10-04, no mobile build required, exact Unity version 6000.3.20f1. Removed the resolved open questions. |
 | v0.3 | 2026-09-16 | Following the instructor's note that each platform must adapt to different screen sizes: added the camera-fit rule, HUD band, background size rule, window mode and the list of supported aspect ratios; added `CameraFitter`; moved the screen-size check from Polish into the MVP; stated that macOS is not a target. |
 | v0.4 | 2026-09-19 | Unity project created from the Universal 2D template (URP, 6000.3.20f1). Set Active Input Handling to Both so the legacy Input Manager in §4 actually works. |
+| v0.5 | 2026-09-25 | Added the impact pack — hit-stop, bounded screen shake, pooled shards, paddle squash and last-brick slow motion — with its tuning parameters, the `ImpactFeedback` script and the pause interaction rule. No gameplay rule changes: scoring, lives, brick damage and the power-up are exactly as approved. Reworded pillar 1 so the bounded shake does not contradict it. |
 
 ---
 
