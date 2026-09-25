@@ -55,6 +55,9 @@ namespace SweetBreaker
         /// <summary>The run moved on to the level with this index; raised before its first serve.</summary>
         public event Action<int> LevelAdvanced;
 
+        /// <summary>The LEVEL CLEAR banner goes up, once the last-brick slow motion has played out.</summary>
+        public event Action LevelClearBannerShown;
+
         private void Awake()
         {
             // A copy is placed in each scene so any scene can be played on its own in the editor;
@@ -205,7 +208,12 @@ namespace SweetBreaker
         private IEnumerator LevelClearSequence(bool wasFinalLevel)
         {
             SetState(GameState.LevelClear);
+
+            // ImpactFeedback plays the last-brick slow motion for this long, in real seconds (GDD section 6).
+            yield return new WaitForSecondsRealtime(config.LastBrickSlowMoDuration);
+
             Audio.Play(Sfx.LevelClear);
+            LevelClearBannerShown?.Invoke();
             yield return new WaitForSeconds(config.LevelClearDelay);
             levelClearRoutine = null;
 

@@ -33,6 +33,7 @@ namespace SweetBreaker
         {
             GameManager.Instance.StateChanged += HandleStateChanged;
             GameManager.Instance.LifeLost += Remove;
+            GameManager.Instance.LevelClearBannerShown += Remove;
         }
 
         private void OnDisable()
@@ -42,6 +43,7 @@ namespace SweetBreaker
 
             GameManager.Instance.StateChanged -= HandleStateChanged;
             GameManager.Instance.LifeLost -= Remove;
+            GameManager.Instance.LevelClearBannerShown -= Remove;
         }
 
         private void Update()
@@ -81,9 +83,10 @@ namespace SweetBreaker
 
         private void HandleStateChanged(GameState state)
         {
+            // On LevelClear the ball keeps flying through the slow motion; the banner removes it.
             if (state == GameState.Serve)
                 AttachToPaddle();
-            else if (state == GameState.LevelClear || state == GameState.GameOver || state == GameState.Victory)
+            else if (state == GameState.GameOver || state == GameState.Victory)
                 Remove();
         }
 

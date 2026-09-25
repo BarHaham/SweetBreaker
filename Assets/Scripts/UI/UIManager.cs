@@ -60,6 +60,7 @@ namespace SweetBreaker
             GameManager.Instance.StateChanged += HandleStateChanged;
             GameManager.Instance.ScoreChanged += ShowScore;
             GameManager.Instance.LivesChanged += ShowLives;
+            GameManager.Instance.LevelClearBannerShown += ShowLevelClearBanner;
         }
 
         private void OnDisable()
@@ -70,6 +71,7 @@ namespace SweetBreaker
             GameManager.Instance.StateChanged -= HandleStateChanged;
             GameManager.Instance.ScoreChanged -= ShowScore;
             GameManager.Instance.LivesChanged -= ShowLives;
+            GameManager.Instance.LevelClearBannerShown -= ShowLevelClearBanner;
         }
 
         private void Start()
@@ -93,9 +95,9 @@ namespace SweetBreaker
             servePrompt.SetActive(state == GameState.Serve);
             ShowPauseScreen(state == GameState.Paused);
 
-            levelClearBanner.gameObject.SetActive(state == GameState.LevelClear);
-            if (state == GameState.LevelClear)
-                levelClearBanner.text = $"LEVEL {GameManager.Instance.LevelIndex + 1} CLEAR";
+            // The banner waits for the last-brick slow motion; any other state takes it down.
+            if (state != GameState.LevelClear)
+                levelClearBanner.gameObject.SetActive(false);
 
             if (state == GameState.GameOver)
                 ShowEndScreen("GAME OVER");
@@ -103,6 +105,12 @@ namespace SweetBreaker
                 ShowEndScreen("YOU WIN!");
             else
                 endScreen.SetActive(false);
+        }
+
+        private void ShowLevelClearBanner()
+        {
+            levelClearBanner.text = $"LEVEL {GameManager.Instance.LevelIndex + 1} CLEAR";
+            levelClearBanner.gameObject.SetActive(true);
         }
 
         private void ShowScore(int score)

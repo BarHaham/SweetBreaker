@@ -4,9 +4,9 @@ using UnityEngine;
 namespace SweetBreaker
 {
     /// <summary>
-    /// Makes breaking a brick and hitting the paddle feel like hits (GDD section 6). Every effect
-    /// here runs on unscaled time, and the time scale always goes through GameManager, never
-    /// Time.timeScale directly.
+    /// Makes breaking a brick and hitting the paddle feel like hits, and ends each level on a beat
+    /// (GDD section 6). Every effect here runs on unscaled time, and the time scale always goes
+    /// through GameManager, never Time.timeScale directly.
     /// </summary>
     public class ImpactFeedback : MonoBehaviour
     {
@@ -22,7 +22,9 @@ namespace SweetBreaker
         private Coroutine hitStopRoutine;
         private Coroutine shakeRoutine;
         private Coroutine squashRoutine;
+        private Coroutine slowMotionRoutine;
         private bool isHitStopped;
+        private float slowMotionScale = 1f;
 
         private void Awake()
         {
@@ -33,12 +35,21 @@ namespace SweetBreaker
         {
             levelManager.BrickDestroyed += PlayBrickBreak;
             paddle.BallHit += SquashPaddle;
+            GameManager.Instance.StateChanged += HandleStateChanged;
         }
 
         private void OnDisable()
         {
             levelManager.BrickDestroyed -= PlayBrickBreak;
             paddle.BallHit -= SquashPaddle;
+            if (GameManager.Instance != null)
+                GameManager.Instance.StateChanged -= HandleStateChanged;
+        }
+
+        private void HandleStateChanged(GameState state)
+        {
+            if (state == GameState.LevelClear)
+                Restart(ref slowMotionRoutine, LastBrickSlowMotion());
         }
 
         private void SquashPaddle()
@@ -92,9 +103,23 @@ namespace SweetBreaker
             body.localScale = Vector3.one;
         }
 
+        /// <summary>
+        /// The last brick of a level breaks in slow motion, so the level ends on a beat instead of
+        /// stopping dead. GameManager holds the LEVEL CLEAR banner back for the same real time.
+        /// </summary>
+        private IEnumerator LastBrickSlowMotion()
+        {
+            slowMotionScale = config.LastBrickSlowMoScale;
+            ApplyTimeScale();
+            yield return new WaitForSecondsRealtime(config.LastBrickSlowMoDuration);
+            slowMotionScale = 1f;
+            ApplyTimeScale();
+        }
+
+        // Hit-stop wins over slow motion: the last brick still freezes, then plays out slowly.
         private void ApplyTimeScale()
         {
-            GameManager.Instance.SetFeedbackTimeScale(isHitStopped ? 0f : 1f);
+            GameManager.Instance.SetFeedbackTimeScale(isHitStopped ? 0f : slowMotionScale);
         }
 
         /// <summary>A new break restarts an effect that is still running instead of stacking a second one.</summary>
