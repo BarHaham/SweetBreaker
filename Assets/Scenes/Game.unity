@@ -695,7 +695,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e632d670092c91d499648d3afaa31972, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SweetBreaker.CameraFitter
-  config: {fileID: 0}
+  config: {fileID: 11400000, guid: d3be06bcde31bac4fb555f7f4387d521, type: 2}
 --- !u!1 &519861927
 GameObject:
   m_ObjectHideFlags: 0
