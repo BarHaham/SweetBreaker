@@ -359,6 +359,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04aaa5c564a580246a2b0b7331c00aa6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SweetBreaker.LevelManager
+  config: {fileID: 11400000, guid: d3be06bcde31bac4fb555f7f4387d521, type: 2}
   levels:
   - {fileID: 11400000, guid: 021e5e3f6f0f75e41978058121978eea, type: 2}
   - {fileID: 11400000, guid: 0d91fc3655af8d84485063efae96b663, type: 2}

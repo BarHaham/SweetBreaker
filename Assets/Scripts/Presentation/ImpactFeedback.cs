@@ -122,7 +122,10 @@ namespace SweetBreaker
             GameManager.Instance.SetFeedbackTimeScale(isHitStopped ? 0f : slowMotionScale);
         }
 
-        /// <summary>A new break restarts an effect that is still running instead of stacking a second one.</summary>
+        /// <summary>
+        /// Starts an effect, first stopping the same effect if it is still running, so a repeated
+        /// trigger restarts it instead of stacking a second copy.
+        /// </summary>
         private void Restart(ref Coroutine routine, IEnumerator effect)
         {
             if (routine != null)

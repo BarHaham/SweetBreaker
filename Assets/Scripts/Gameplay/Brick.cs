@@ -55,7 +55,7 @@ namespace SweetBreaker
             {
                 // A different sprite, not a tint, so the damage reads mid-rally.
                 spriteRenderer.sprite = crackedSprite;
-                owner.ReportBrickCracked(this, config.ScoreTwoHitCrack);
+                owner.ReportBrickCracked(config.ScoreTwoHitCrack);
                 return;
             }
 

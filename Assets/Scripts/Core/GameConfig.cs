@@ -64,7 +64,7 @@ namespace SweetBreaker
         [field: SerializeField, Tooltip("Width x height of the walled play area, walls included (u).")]
         public Vector2 PlayFieldSize { get; private set; } = new Vector2(16f, 10f);
 
-        [field: SerializeField, Tooltip("Strip at the top of the play field that the HUD sits over (u).")]
+        [field: SerializeField, Tooltip("Strip at the top of the play field that the HUD sits over (u). No brick may sit in it; LevelManager warns if one does.")]
         public float HudBandHeight { get; private set; } = 1f;
 
         [field: Header("Impact feedback")]
