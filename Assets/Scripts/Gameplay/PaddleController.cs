@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace SweetBreaker
@@ -5,6 +6,7 @@ namespace SweetBreaker
     /// <summary>
     /// Moves the paddle along X only. Input is read in Update and applied in FixedUpdate; keyboard
     /// and mouse are both live, and whichever moved last owns the paddle (GDD section 4).
+    /// Also owns the paddle's width, which the expansion power-up changes for a while.
     /// </summary>
     [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D))]
     public class PaddleController : MonoBehaviour
@@ -24,11 +26,20 @@ namespace SweetBreaker
         private float mouseTargetX;
         private Vector3 lastMousePosition;
 
+        private Coroutine expansionRoutine;
+        private float expansionEndTime;
+
         /// <summary>Current width in world units.</summary>
         public float Width { get; private set; }
 
         /// <summary>-1 or +1 while moving left or right during the last physics step, 0 when still.</summary>
         public int MoveDirection { get; private set; }
+
+        public bool IsExpanded => expansionRoutine != null;
+
+        /// <summary>How much of the expansion is left, from 1 when caught down to 0 when it ends.</summary>
+        public float ExpansionTimeLeft01 =>
+            IsExpanded ? Mathf.Clamp01((expansionEndTime - Time.time) / config.PowerUpDuration) : 0f;
 
         private float MinX => leftWall.bounds.max.x + Width * 0.5f;
         private float MaxX => rightWall.bounds.min.x - Width * 0.5f;
@@ -45,12 +56,16 @@ namespace SweetBreaker
         private void OnEnable()
         {
             GameManager.Instance.StateChanged += HandleStateChanged;
+            GameManager.Instance.LifeLost += EndExpansion;
         }
 
         private void OnDisable()
         {
-            if (GameManager.Instance != null)
-                GameManager.Instance.StateChanged -= HandleStateChanged;
+            if (GameManager.Instance == null)
+                return;
+
+            GameManager.Instance.StateChanged -= HandleStateChanged;
+            GameManager.Instance.LifeLost -= EndExpansion;
         }
 
         private void Update()
@@ -67,10 +82,44 @@ namespace SweetBreaker
                 Move();
         }
 
+        /// <summary>
+        /// Widens the paddle for PowerUpDuration. Catching another capsule while it runs restarts the
+        /// timer and never stacks the width (GDD section 3).
+        /// </summary>
+        public void Expand()
+        {
+            if (expansionRoutine != null)
+                StopCoroutine(expansionRoutine);
+
+            SetWidth(config.PaddleWidth * config.PaddleExpandMultiplier);
+            expansionRoutine = StartCoroutine(ExpansionTimer());
+        }
+
+        private IEnumerator ExpansionTimer()
+        {
+            expansionEndTime = Time.time + config.PowerUpDuration;
+            yield return new WaitForSeconds(config.PowerUpDuration);
+            expansionRoutine = null;
+            SetWidth(config.PaddleWidth);
+        }
+
+        /// <summary>The effect ends at once when a life is lost or the level is cleared.</summary>
+        private void EndExpansion()
+        {
+            if (expansionRoutine == null)
+                return;
+
+            StopCoroutine(expansionRoutine);
+            expansionRoutine = null;
+            SetWidth(config.PaddleWidth);
+        }
+
         private void HandleStateChanged(GameState state)
         {
             if (state == GameState.Serve)
                 Recentre();
+            else if (state == GameState.LevelClear)
+                EndExpansion();
         }
 
         /// <summary>Puts the paddle back in the middle of the field and hands control back to the keyboard.</summary>
@@ -119,6 +168,9 @@ namespace SweetBreaker
             Width = width;
             body.size = new Vector2(width, body.size.y);
             box.size = new Vector2(width, box.size.y);
+
+            // Re-clamp at once, so a paddle that widens next to a wall is pushed back inside it.
+            rb.position = new Vector2(Mathf.Clamp(rb.position.x, MinX, MaxX), rb.position.y);
         }
     }
 }
