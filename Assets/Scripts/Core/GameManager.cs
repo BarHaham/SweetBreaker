@@ -22,6 +22,7 @@ namespace SweetBreaker
         [SerializeField] private GameConfig config;
 
         private Coroutine serveRoutine;
+        private GameState stateBeforePause;
 
         public GameState State { get; private set; } = GameState.MainMenu;
         public int Score { get; private set; }
@@ -66,6 +67,38 @@ namespace SweetBreaker
 
             SceneManager.sceneLoaded -= OnSceneLoaded;
             Instance = null;
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
+                TogglePause();
+        }
+
+        // Alt-tabbing away must never cost a life (GDD section 4).
+        private void OnApplicationFocus(bool hasFocus)
+        {
+            if (!hasFocus && IsInPlay)
+                Pause();
+        }
+
+        /// <summary>Esc or P. Ignored outside the Serve and Playing states (GDD section 3).</summary>
+        public void TogglePause()
+        {
+            if (State == GameState.Paused)
+                Resume();
+            else if (IsInPlay)
+                Pause();
+        }
+
+        public void Resume()
+        {
+            if (State != GameState.Paused)
+                return;
+
+            AudioListener.pause = false;
+            SetState(stateBeforePause);
+            ApplyTimeScale();
         }
 
         /// <summary>PLAY, PLAY AGAIN and RESTART RUN: score 0, full lives, level 1.</summary>
@@ -142,7 +175,23 @@ namespace SweetBreaker
             // Nothing timed may carry over from the scene that was just unloaded.
             StopAllCoroutines();
             serveRoutine = null;
+            AudioListener.pause = false;
             SetState(scene.name == GameSceneName ? GameState.Serve : GameState.MainMenu);
+            ApplyTimeScale();
+        }
+
+        private void Pause()
+        {
+            stateBeforePause = State;
+            AudioListener.pause = true;
+            SetState(GameState.Paused);
+            ApplyTimeScale();
+        }
+
+        // The only place in the game that writes Time.timeScale.
+        private void ApplyTimeScale()
+        {
+            Time.timeScale = State == GameState.Paused ? 0f : 1f;
         }
 
         private void ResetRun()

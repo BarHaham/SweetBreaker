@@ -21,6 +21,12 @@ namespace SweetBreaker
         private Image[] lifeIcons;
         [SerializeField] private GameObject servePrompt;
 
+        [Header("Pause")]
+        [SerializeField] private GameObject pauseScreen;
+        [SerializeField] private Button resumeButton;
+        [SerializeField] private Button restartRunButton;
+        [SerializeField] private Button pauseMainMenuButton;
+
         [Header("Game Over / Victory (one layout, two headings)")]
         [SerializeField] private GameObject endScreen;
         [SerializeField] private TMP_Text endHeading;
@@ -32,6 +38,9 @@ namespace SweetBreaker
 
         private void Awake()
         {
+            resumeButton.onClick.AddListener(() => GameManager.Instance.Resume());
+            restartRunButton.onClick.AddListener(() => GameManager.Instance.StartNewRun());
+            pauseMainMenuButton.onClick.AddListener(() => GameManager.Instance.ReturnToMainMenu());
             playAgainButton.onClick.AddListener(() => GameManager.Instance.StartNewRun());
             endMainMenuButton.onClick.AddListener(() => GameManager.Instance.ReturnToMainMenu());
         }
@@ -65,6 +74,7 @@ namespace SweetBreaker
         private void HandleStateChanged(GameState state)
         {
             servePrompt.SetActive(state == GameState.Serve);
+            ShowPauseScreen(state == GameState.Paused);
 
             if (state == GameState.GameOver)
                 ShowEndScreen("GAME OVER");
@@ -83,6 +93,18 @@ namespace SweetBreaker
         {
             for (int i = 0; i < lifeIcons.Length; i++)
                 lifeIcons[i].enabled = i < lives;
+        }
+
+        /// <summary>The level stays visible behind the dimmed overlay (GDD section 5).</summary>
+        private void ShowPauseScreen(bool show)
+        {
+            if (pauseScreen.activeSelf == show)
+                return;
+
+            pauseScreen.SetActive(show);
+
+            // Selecting RESUME lets Enter confirm it; nothing stays selected once play resumes.
+            EventSystem.current.SetSelectedGameObject(show ? resumeButton.gameObject : null);
         }
 
         private void ShowEndScreen(string heading)
