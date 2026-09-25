@@ -151,3 +151,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d7a3dc9e300f4e4ba1c7d4b4e828fb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SweetBreaker.Brick
+  config: {fileID: 11400000, guid: d3be06bcde31bac4fb555f7f4387d521, type: 2}

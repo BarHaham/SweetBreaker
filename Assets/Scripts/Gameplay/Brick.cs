@@ -9,6 +9,8 @@ namespace SweetBreaker
     [RequireComponent(typeof(Collider2D))]
     public class Brick : MonoBehaviour
     {
+        [SerializeField] private GameConfig config;
+
         private LevelManager owner;
         private bool isBroken;
 
@@ -27,7 +29,7 @@ namespace SweetBreaker
         {
             // Destroy is deferred to the end of the frame, so a second contact this step must not count.
             isBroken = true;
-            owner.ReportBrickDestroyed(this);
+            owner.ReportBrickDestroyed(this, config.ScoreOneHitBreak);
             Destroy(gameObject);
         }
     }
