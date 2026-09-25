@@ -33,6 +33,11 @@ namespace SweetBreaker
                 brick.Initialize(this);
         }
 
+        public void ReportBrickCracked(Brick brick, int points)
+        {
+            GameManager.Instance.AddScore(points);
+        }
+
         public void ReportBrickDestroyed(Brick brick, int points)
         {
             GameManager.Instance.AddScore(points);
