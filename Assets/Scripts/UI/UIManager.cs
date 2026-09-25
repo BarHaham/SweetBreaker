@@ -16,6 +16,7 @@ namespace SweetBreaker
 
         [Header("HUD")]
         [SerializeField] private TMP_Text scoreText;
+        [SerializeField] private TMP_Text highScoreText;
         [SerializeField, Tooltip("One candy per life, removed from the last one down.")]
         private Image[] lifeIcons;
         [SerializeField] private GameObject servePrompt;
@@ -24,6 +25,8 @@ namespace SweetBreaker
         [SerializeField] private GameObject endScreen;
         [SerializeField] private TMP_Text endHeading;
         [SerializeField] private TMP_Text finalScoreText;
+        [SerializeField] private TMP_Text storedHighScoreText;
+        [SerializeField] private GameObject newHighScoreLine;
         [SerializeField] private Button playAgainButton;
         [SerializeField] private Button endMainMenuButton;
 
@@ -55,6 +58,7 @@ namespace SweetBreaker
             GameManager game = GameManager.Instance;
             ShowScore(game.Score);
             ShowLives(game.Lives);
+            highScoreText.text = $"HIGH  {game.HighScore}";
             HandleStateChanged(game.State);
         }
 
@@ -83,8 +87,12 @@ namespace SweetBreaker
 
         private void ShowEndScreen(string heading)
         {
+            GameManager game = GameManager.Instance;
             endHeading.text = heading;
-            finalScoreText.text = $"SCORE  {GameManager.Instance.Score}";
+            finalScoreText.text = $"SCORE  {game.Score}";
+            storedHighScoreText.text = $"HIGH SCORE  {game.HighScore}";
+            newHighScoreLine.SetActive(game.IsNewHighScore);
+            highScoreText.text = $"HIGH  {game.HighScore}";
             endScreen.SetActive(true);
             StartCoroutine(UnlockEndScreenButtons());
         }

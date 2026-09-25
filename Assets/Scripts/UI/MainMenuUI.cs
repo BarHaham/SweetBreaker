@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -11,6 +12,7 @@ namespace SweetBreaker
     {
         [SerializeField] private Button playButton;
         [SerializeField] private Button quitButton;
+        [SerializeField] private TMP_Text highScoreText;
 
         private void Awake()
         {
@@ -20,6 +22,7 @@ namespace SweetBreaker
 
         private void Start()
         {
+            highScoreText.text = $"HIGH SCORE  {HighScoreStore.Load()}";
             // Selected so Enter confirms it without touching the mouse (GDD section 4).
             EventSystem.current.SetSelectedGameObject(playButton.gameObject);
         }

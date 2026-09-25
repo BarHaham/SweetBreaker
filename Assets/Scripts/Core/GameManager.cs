@@ -27,6 +27,12 @@ namespace SweetBreaker
         public int Score { get; private set; }
         public int Lives { get; private set; }
 
+        /// <summary>The stored best score. It only changes when a run ends.</summary>
+        public int HighScore { get; private set; }
+
+        /// <summary>Whether the run that just ended beat the stored high score.</summary>
+        public bool IsNewHighScore { get; private set; }
+
         /// <summary>True in the two states where the paddle and ball are live.</summary>
         public bool IsInPlay => State == GameState.Serve || State == GameState.Playing;
 
@@ -104,7 +110,7 @@ namespace SweetBreaker
             LifeLost?.Invoke();
 
             if (Lives <= 0)
-                SetState(GameState.GameOver);
+                EndRun(GameState.GameOver);
             else
                 serveRoutine = StartCoroutine(ServeAfterDelay());
         }
@@ -113,7 +119,15 @@ namespace SweetBreaker
         public void CompleteLevel()
         {
             if (State == GameState.Playing)
-                SetState(GameState.Victory);
+                EndRun(GameState.Victory);
+        }
+
+        /// <summary>The high score is written only here, when a run ends (GDD section 3).</summary>
+        private void EndRun(GameState ending)
+        {
+            IsNewHighScore = HighScoreStore.TrySave(Score);
+            HighScore = HighScoreStore.Load();
+            SetState(ending);
         }
 
         private IEnumerator ServeAfterDelay()
@@ -135,6 +149,8 @@ namespace SweetBreaker
         {
             Score = 0;
             Lives = config.StartingLives;
+            HighScore = HighScoreStore.Load();
+            IsNewHighScore = false;
         }
 
         private void SetState(GameState newState)
