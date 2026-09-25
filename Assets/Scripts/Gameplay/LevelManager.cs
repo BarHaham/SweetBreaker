@@ -5,32 +5,33 @@ namespace SweetBreaker
 {
     /// <summary>
     /// Builds the current level from its layout prefab and counts the breakable bricks left in it.
+    /// Levels are prefabs swapped inside Game.unity, not scenes (GDD section 7).
     /// </summary>
     public class LevelManager : MonoBehaviour
     {
         [SerializeField] private LevelDefinition[] levels;
 
         private GameObject currentLayout;
+        private int currentLevelIndex;
         private int breakablesLeft;
 
         /// <summary>Raised after a brick is destroyed, before the level-clear check.</summary>
         public event Action<Brick> BrickDestroyed;
 
-        private void Start()
+        private void OnEnable()
         {
-            BuildLevel(0);
+            GameManager.Instance.LevelAdvanced += BuildLevel;
         }
 
-        public void BuildLevel(int levelIndex)
+        private void OnDisable()
         {
-            if (currentLayout != null)
-                Destroy(currentLayout);
+            if (GameManager.Instance != null)
+                GameManager.Instance.LevelAdvanced -= BuildLevel;
+        }
 
-            currentLayout = Instantiate(levels[levelIndex].LayoutPrefab, transform);
-            Brick[] bricks = currentLayout.GetComponentsInChildren<Brick>();
-            breakablesLeft = bricks.Length;
-            foreach (Brick brick in bricks)
-                brick.Initialize(this);
+        private void Start()
+        {
+            BuildLevel(GameManager.Instance.LevelIndex);
         }
 
         public void ReportBrickCracked(Brick brick, int points)
@@ -46,7 +47,20 @@ namespace SweetBreaker
 
             // "Breakable count == 0" rather than "brick count == 0", as GDD section 3 phrases it.
             if (breakablesLeft == 0)
-                GameManager.Instance.CompleteLevel();
+                GameManager.Instance.CompleteLevel(currentLevelIndex == levels.Length - 1);
+        }
+
+        private void BuildLevel(int levelIndex)
+        {
+            if (currentLayout != null)
+                Destroy(currentLayout);
+
+            currentLevelIndex = levelIndex;
+            currentLayout = Instantiate(levels[levelIndex].LayoutPrefab, transform);
+            Brick[] bricks = currentLayout.GetComponentsInChildren<Brick>();
+            breakablesLeft = bricks.Length;
+            foreach (Brick brick in bricks)
+                brick.Initialize(this);
         }
     }
 }

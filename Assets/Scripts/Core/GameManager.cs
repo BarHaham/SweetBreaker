@@ -22,11 +22,15 @@ namespace SweetBreaker
         [SerializeField] private GameConfig config;
 
         private Coroutine serveRoutine;
+        private Coroutine levelClearRoutine;
         private GameState stateBeforePause;
 
         public GameState State { get; private set; } = GameState.MainMenu;
         public int Score { get; private set; }
         public int Lives { get; private set; }
+
+        /// <summary>Zero-based index of the current level.</summary>
+        public int LevelIndex { get; private set; }
 
         /// <summary>The stored best score. It only changes when a run ends.</summary>
         public int HighScore { get; private set; }
@@ -43,6 +47,9 @@ namespace SweetBreaker
 
         /// <summary>The ball reached the dead zone; raised before the serve delay starts.</summary>
         public event Action LifeLost;
+
+        /// <summary>The run moved on to the level with this index; raised before its first serve.</summary>
+        public event Action<int> LevelAdvanced;
 
         private void Awake()
         {
@@ -148,11 +155,11 @@ namespace SweetBreaker
                 serveRoutine = StartCoroutine(ServeAfterDelay());
         }
 
-        /// <summary>The last breakable brick is gone. With one level, clearing it wins the run.</summary>
-        public void CompleteLevel()
+        /// <summary>The last breakable brick is gone: show the banner, then the next level or victory.</summary>
+        public void CompleteLevel(bool wasFinalLevel)
         {
-            if (State == GameState.Playing)
-                EndRun(GameState.Victory);
+            if (State == GameState.Playing && levelClearRoutine == null)
+                levelClearRoutine = StartCoroutine(LevelClearSequence(wasFinalLevel));
         }
 
         /// <summary>The high score is written only here, when a run ends (GDD section 3).</summary>
@@ -170,11 +177,33 @@ namespace SweetBreaker
             SetState(GameState.Serve);
         }
 
+        /// <summary>
+        /// The LEVEL CLEAR beat. Score and lives carry over to the next level; lives are not refilled
+        /// (GDD section 3).
+        /// </summary>
+        private IEnumerator LevelClearSequence(bool wasFinalLevel)
+        {
+            SetState(GameState.LevelClear);
+            yield return new WaitForSeconds(config.LevelClearDelay);
+            levelClearRoutine = null;
+
+            if (wasFinalLevel)
+            {
+                EndRun(GameState.Victory);
+                yield break;
+            }
+
+            LevelIndex++;
+            LevelAdvanced?.Invoke(LevelIndex);
+            SetState(GameState.Serve);
+        }
+
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             // Nothing timed may carry over from the scene that was just unloaded.
             StopAllCoroutines();
             serveRoutine = null;
+            levelClearRoutine = null;
             AudioListener.pause = false;
             SetState(scene.name == GameSceneName ? GameState.Serve : GameState.MainMenu);
             ApplyTimeScale();
@@ -198,6 +227,7 @@ namespace SweetBreaker
         {
             Score = 0;
             Lives = config.StartingLives;
+            LevelIndex = 0;
             HighScore = HighScoreStore.Load();
             IsNewHighScore = false;
         }

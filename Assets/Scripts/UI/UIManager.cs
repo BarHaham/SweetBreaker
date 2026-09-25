@@ -20,6 +20,8 @@ namespace SweetBreaker
         [SerializeField, Tooltip("One candy per life, removed from the last one down.")]
         private Image[] lifeIcons;
         [SerializeField] private GameObject servePrompt;
+        [SerializeField, Tooltip("LEVEL n CLEAR: a beat, not a screen. No buttons, no input.")]
+        private TMP_Text levelClearBanner;
 
         [Header("Pause")]
         [SerializeField] private GameObject pauseScreen;
@@ -75,6 +77,10 @@ namespace SweetBreaker
         {
             servePrompt.SetActive(state == GameState.Serve);
             ShowPauseScreen(state == GameState.Paused);
+
+            levelClearBanner.gameObject.SetActive(state == GameState.LevelClear);
+            if (state == GameState.LevelClear)
+                levelClearBanner.text = $"LEVEL {GameManager.Instance.LevelIndex + 1} CLEAR";
 
             if (state == GameState.GameOver)
                 ShowEndScreen("GAME OVER");

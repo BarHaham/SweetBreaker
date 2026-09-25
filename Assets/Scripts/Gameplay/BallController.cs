@@ -75,7 +75,7 @@ namespace SweetBreaker
         {
             if (state == GameState.Serve)
                 AttachToPaddle();
-            else if (state == GameState.GameOver || state == GameState.Victory)
+            else if (state == GameState.LevelClear || state == GameState.GameOver || state == GameState.Victory)
                 Remove();
         }
 
