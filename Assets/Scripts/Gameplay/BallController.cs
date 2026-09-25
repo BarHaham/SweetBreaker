@@ -19,27 +19,42 @@ namespace SweetBreaker
         private float serveHeight = 0.38f;
 
         private Rigidbody2D rb;
+        private SpriteRenderer spriteRenderer;
         private bool isServing;
         private float stallTimer;
 
         private void Awake()
         {
             rb = GetComponent<Rigidbody2D>();
+            spriteRenderer = GetComponent<SpriteRenderer>();
         }
 
-        private void Start()
+        private void OnEnable()
         {
-            AttachToPaddle();
+            GameManager.Instance.StateChanged += HandleStateChanged;
+            GameManager.Instance.LifeLost += Remove;
+        }
+
+        private void OnDisable()
+        {
+            if (GameManager.Instance == null)
+                return;
+
+            GameManager.Instance.StateChanged -= HandleStateChanged;
+            GameManager.Instance.LifeLost -= Remove;
         }
 
         private void Update()
         {
-            if (isServing && LaunchPressed())
+            if (isServing && GameManager.Instance.State == GameState.Serve && LaunchPressed())
                 Launch();
         }
 
         private void FixedUpdate()
         {
+            if (!rb.simulated)
+                return;
+
             if (isServing)
             {
                 FollowPaddle();
@@ -56,15 +71,36 @@ namespace SweetBreaker
                 ReboundFrom(hitPaddle);
         }
 
+        private void HandleStateChanged(GameState state)
+        {
+            if (state == GameState.Serve)
+                AttachToPaddle();
+            else if (state == GameState.GameOver || state == GameState.Victory)
+                Remove();
+        }
+
         /// <summary>Locks the ball to the paddle's centre until the player launches it.</summary>
-        public void AttachToPaddle()
+        private void AttachToPaddle()
         {
             isServing = true;
             stallTimer = 0f;
+            rb.simulated = true;
+            spriteRenderer.enabled = true;
             rb.bodyType = RigidbodyType2D.Kinematic;
             rb.linearVelocity = Vector2.zero;
             FollowPaddle();
             transform.position = rb.position;
+        }
+
+        /// <summary>
+        /// Takes the ball out of play. The object stays active so it keeps listening for the next serve.
+        /// </summary>
+        private void Remove()
+        {
+            isServing = false;
+            rb.linearVelocity = Vector2.zero;
+            rb.simulated = false;
+            spriteRenderer.enabled = false;
         }
 
         private static bool LaunchPressed()
@@ -86,6 +122,7 @@ namespace SweetBreaker
             float side = paddle.MoveDirection < 0 ? -1f : 1f;
             float angle = config.LaunchAngle * Mathf.Deg2Rad;
             rb.linearVelocity = new Vector2(Mathf.Cos(angle) * side, Mathf.Sin(angle)) * config.BallSpeed;
+            GameManager.Instance.NotifyBallLaunched();
         }
 
         private void FollowPaddle()

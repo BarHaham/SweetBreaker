@@ -42,18 +42,39 @@ namespace SweetBreaker
             SetWidth(config.PaddleWidth);
         }
 
+        private void OnEnable()
+        {
+            GameManager.Instance.StateChanged += HandleStateChanged;
+        }
+
+        private void OnDisable()
+        {
+            if (GameManager.Instance != null)
+                GameManager.Instance.StateChanged -= HandleStateChanged;
+        }
+
         private void Update()
         {
-            ReadInput();
+            if (GameManager.Instance.IsInPlay)
+                ReadInput();
+            else
+                keyboardAxis = 0f;
         }
 
         private void FixedUpdate()
         {
-            Move();
+            if (GameManager.Instance.IsInPlay)
+                Move();
+        }
+
+        private void HandleStateChanged(GameState state)
+        {
+            if (state == GameState.Serve)
+                Recentre();
         }
 
         /// <summary>Puts the paddle back in the middle of the field and hands control back to the keyboard.</summary>
-        public void Recentre()
+        private void Recentre()
         {
             float centreX = (leftWall.bounds.max.x + rightWall.bounds.min.x) * 0.5f;
             rb.position = new Vector2(centreX, rb.position.y);
