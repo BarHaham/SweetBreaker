@@ -1081,6 +1081,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SweetBreaker.ImpactFeedback
   config: {fileID: 11400000, guid: d3be06bcde31bac4fb555f7f4387d521, type: 2}
   levelManager: {fileID: 251247802}
+  paddle: {fileID: 22877252}
   cameraTransform: {fileID: 519420032}
 --- !u!4 &762283325
 Transform:

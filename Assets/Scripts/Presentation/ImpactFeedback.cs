@@ -4,18 +4,24 @@ using UnityEngine;
 namespace SweetBreaker
 {
     /// <summary>
-    /// Makes breaking a brick feel like a hit (GDD section 6). Every effect here runs on unscaled
-    /// time, and the time scale always goes through GameManager, never Time.timeScale directly.
+    /// Makes breaking a brick and hitting the paddle feel like hits (GDD section 6). Every effect
+    /// here runs on unscaled time, and the time scale always goes through GameManager, never
+    /// Time.timeScale directly.
     /// </summary>
     public class ImpactFeedback : MonoBehaviour
     {
+        // How far the paddle body squashes at the moment of contact, before springing back.
+        private static readonly Vector3 SquashedScale = new Vector3(1.12f, 0.7f, 1f);
+
         [SerializeField] private GameConfig config;
         [SerializeField] private LevelManager levelManager;
+        [SerializeField] private PaddleController paddle;
         [SerializeField] private Transform cameraTransform;
 
         private Vector3 cameraRestPosition;
         private Coroutine hitStopRoutine;
         private Coroutine shakeRoutine;
+        private Coroutine squashRoutine;
         private bool isHitStopped;
 
         private void Awake()
@@ -26,11 +32,18 @@ namespace SweetBreaker
         private void OnEnable()
         {
             levelManager.BrickDestroyed += PlayBrickBreak;
+            paddle.BallHit += SquashPaddle;
         }
 
         private void OnDisable()
         {
             levelManager.BrickDestroyed -= PlayBrickBreak;
+            paddle.BallHit -= SquashPaddle;
+        }
+
+        private void SquashPaddle()
+        {
+            Restart(ref squashRoutine, Squash());
         }
 
         private void PlayBrickBreak(Brick brick)
@@ -64,6 +77,19 @@ namespace SweetBreaker
             }
 
             cameraTransform.localPosition = cameraRestPosition;
+        }
+
+        /// <summary>The paddle flattens on contact and springs back, so the rebound reads as a hit.</summary>
+        private IEnumerator Squash()
+        {
+            Transform body = paddle.Body;
+            for (float elapsed = 0f; elapsed < config.PaddleSquashDuration; elapsed += Time.unscaledDeltaTime)
+            {
+                body.localScale = Vector3.Lerp(SquashedScale, Vector3.one, elapsed / config.PaddleSquashDuration);
+                yield return null;
+            }
+
+            body.localScale = Vector3.one;
         }
 
         private void ApplyTimeScale()

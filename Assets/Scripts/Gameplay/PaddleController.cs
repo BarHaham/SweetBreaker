@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -36,6 +37,11 @@ namespace SweetBreaker
         public int MoveDirection { get; private set; }
 
         public bool IsExpanded => expansionRoutine != null;
+
+        /// <summary>The visual body, which ImpactFeedback squashes. The collider is never scaled.</summary>
+        public Transform Body => body.transform;
+
+        public event Action BallHit;
 
         /// <summary>How much of the expansion is left, from 1 when caught down to 0 when it ends.</summary>
         public float ExpansionTimeLeft01 =>
@@ -80,6 +86,12 @@ namespace SweetBreaker
         {
             if (GameManager.Instance.IsInPlay)
                 Move();
+        }
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            if (collision.collider.TryGetComponent(out BallController _))
+                BallHit?.Invoke();
         }
 
         /// <summary>
