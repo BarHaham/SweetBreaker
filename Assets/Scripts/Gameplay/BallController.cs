@@ -68,7 +68,15 @@ namespace SweetBreaker
         private void OnCollisionEnter2D(Collision2D collision)
         {
             if (collision.collider.TryGetComponent(out PaddleController hitPaddle))
+            {
                 ReboundFrom(hitPaddle);
+                GameManager.Instance.Audio.Play(Sfx.PaddleBounce);
+            }
+            else if (!collision.collider.TryGetComponent(out Brick _))
+            {
+                // Bricks play their own crack or break sound.
+                GameManager.Instance.Audio.Play(Sfx.WallBounce);
+            }
         }
 
         private void HandleStateChanged(GameState state)

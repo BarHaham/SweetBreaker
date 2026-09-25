@@ -25,6 +25,9 @@ namespace SweetBreaker
         private Coroutine levelClearRoutine;
         private GameState stateBeforePause;
 
+        /// <summary>One-shot sound effects; the AudioManager travels with this object.</summary>
+        public AudioManager Audio { get; private set; }
+
         public GameState State { get; private set; } = GameState.MainMenu;
         public int Score { get; private set; }
         public int Lives { get; private set; }
@@ -62,6 +65,7 @@ namespace SweetBreaker
             }
 
             Instance = this;
+            Audio = GetComponent<AudioManager>();
             DontDestroyOnLoad(gameObject);
             SceneManager.sceneLoaded += OnSceneLoaded;
             ResetRun();
@@ -150,9 +154,15 @@ namespace SweetBreaker
             LifeLost?.Invoke();
 
             if (Lives <= 0)
+            {
+                Audio.Play(Sfx.GameOver);
                 EndRun(GameState.GameOver);
+            }
             else
+            {
+                Audio.Play(Sfx.LifeLost);
                 serveRoutine = StartCoroutine(ServeAfterDelay());
+            }
         }
 
         /// <summary>The last breakable brick is gone: show the banner, then the next level or victory.</summary>
@@ -184,6 +194,7 @@ namespace SweetBreaker
         private IEnumerator LevelClearSequence(bool wasFinalLevel)
         {
             SetState(GameState.LevelClear);
+            Audio.Play(Sfx.LevelClear);
             yield return new WaitForSeconds(config.LevelClearDelay);
             levelClearRoutine = null;
 

@@ -37,11 +37,13 @@ namespace SweetBreaker
         public void ReportBrickCracked(Brick brick, int points)
         {
             GameManager.Instance.AddScore(points);
+            GameManager.Instance.Audio.Play(Sfx.BrickCrack);
         }
 
         public void ReportBrickDestroyed(Brick brick, int points)
         {
             GameManager.Instance.AddScore(points);
+            GameManager.Instance.Audio.Play(Sfx.BrickBreak);
             breakablesLeft--;
             BrickDestroyed?.Invoke(brick);
 

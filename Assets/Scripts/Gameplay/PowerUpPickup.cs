@@ -32,6 +32,7 @@ namespace SweetBreaker
             if (other.TryGetComponent(out PaddleController paddle))
             {
                 paddle.Expand();
+                GameManager.Instance.Audio.Play(Sfx.PowerUpPickup);
                 Destroy(gameObject);
             }
             else if (other.TryGetComponent(out DeadZone _))
