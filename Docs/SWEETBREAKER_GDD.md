@@ -1,6 +1,7 @@
 # Game Design Document — *Sweet Breaker*
 
-> **Status: approved by the instructor. Implementation has not started yet.**
+> **Status: approved by the instructor. Implemented: every MVP and polish item in §8 is built;
+> the real Windows-build check at every aspect ratio and the playtest are still to do.**
 > Every number below is an initial design estimate, not a measured result.
 > **Submission deadline: 2026-10-04.**
 
@@ -10,10 +11,10 @@
 | **Team** | Bar Haham (gameplay programming, physics & tuning), Yuval Rauser (UI, levels, audio & art integration) — provisional split, to be confirmed between us |
 | **Genre** | Single-player 2D arcade brick-breaker / score-chaser |
 | **Target platform** | PC (Windows) standalone build, keyboard + mouse. A mobile build is not required and is not planned. |
-| **Engine / Unity version** | Unity **6000.3.20f1** (Unity 6.3 LTS), 2D — the exact version required by the course. No other editor version is used. Render pipeline (Built-in 2D vs URP 2D) is decided when the project is created. |
+| **Engine / Unity version** | Unity **6000.3.20f1** (Unity 6.3 LTS), 2D — the exact version required by the course. No other editor version is used. Render pipeline: URP 2D (the Universal 2D template). |
 | **Orientation & reference resolution** | Landscape, 1920 × 1080 reference. Supported aspect ratios: 16:9, 16:10, 4:3 and 21:9 (see §5) |
 | **Expected session length** | 3–6 minutes for a full three-level run (initial estimate) |
-| **Document version** | v0.5 — 2026-09-25 |
+| **Document version** | v0.6 — 2026-09-25 |
 
 ---
 
@@ -269,7 +270,8 @@ reach at `paddleSpeed`. If either fails, `ballSpeed` and `paddleSpeed` are the f
 - **Camera and play-field fit.** The UI scaling above does not move the game world, so the camera
   has its own rule. The camera is orthographic and its size is set so that the **whole play field,
   both side walls included, is always visible**:
-  `orthographicSize = max(playFieldHeight / 2, (playFieldWidth / 2) / aspect)`.
+  `orthographicSize = max(playFieldHeight / 2 + m, (playFieldWidth / 2 + m) / aspect)`, where the
+  margin `m` is `screenShakeMagnitude`, so the field stays fully in view while the camera shakes (§6).
   On a wider screen (21:9) the extra width shows background at the sides; on a narrower one (4:3)
   the extra height shows background above and below. The play field is never cropped, which is
   what pillar 1 requires. The fit is recalculated whenever `Screen.width` or `Screen.height`
@@ -301,23 +303,24 @@ player learns the rule without a tutorial line. A cracked chocolate brick gets a
 with a visible fracture and a lighter body — legible at a glance in the middle of a rally, which a
 colour tint alone would not be.
 
-**Nothing in this table has been obtained yet.** Every row is proposed. We have not downloaded any
-asset pack and have not created production art. Licences will be recorded per asset in this table
-at the moment each one is actually chosen — an empty licence cell is an honest one.
+**What we actually used.** No asset pack was downloaded. Every sprite and every sound effect is our
+own, generated in the editor from simple shapes and synthesised tones, so there is no third-party
+licence to track for them. The only third-party asset is the UI font that ships with TextMesh Pro.
 
 | Asset | Variants / frames | Source & licence | Use | Status |
 |---|---|---|---|---|
-| Candy brick sprite | 3 colours × 1 state | To be decided — own art or CC0 | One-hit bricks | Proposed |
-| Chocolate brick sprite | 1 colour × 2 states (intact, cracked) | To be decided — own art or CC0 | Two-hit bricks | Proposed |
-| Paddle sprite | 1, 9-sliced so the power-up stretches the body and not the ends | To be decided | Player paddle | Proposed |
-| Ball sprite | 1 | To be decided | Ball | Proposed |
-| Power-up capsule sprite | 1 | To be decided | Paddle expansion pickup | Proposed |
-| Background | 1 | To be decided | Play area backdrop | Proposed |
-| Brick-break particle | 1 small burst | Unity built-in particle system, own material | Break feedback | Proposed |
-| Chocolate / candy shard sprites | 3 shapes × 2 palettes | To be decided — own art | Pooled break fragments | Proposed |
-| UI font | 1 rounded display face | To be decided — licence must permit redistribution | All screens | Proposed |
-| SFX: paddle bounce, wall bounce, brick crack, brick break, power-up pickup, life lost, level clear, game over | 8 one-shots | Candidate libraries from Session 5: [freesound.org](https://freesound.org/), [pixabay sound effects](https://pixabay.com/sound-effects/) — per-clip licence to be recorded when chosen; CC0 preferred | Feedback | Proposed |
-| Music | 1 short loop, menu only | To be decided; may be cut | Menu ambience | Proposed, low priority |
+| Candy brick sprite | 3 colours × 1 state | Own art, drawn in the editor | One-hit bricks | Done (placeholder quality) |
+| Chocolate brick sprite | 1 colour × 2 states (intact, cracked) | Own art, drawn in the editor | Two-hit bricks | Done (placeholder quality) |
+| Paddle sprite | 1, 9-sliced so the power-up stretches the body and not the ends | Own art, drawn in the editor | Player paddle | Done |
+| Ball sprite | 1 | Own art, drawn in the editor | Ball | Done |
+| Power-up capsule sprite | 1 | Own art, drawn in the editor | Paddle expansion pickup | Done |
+| Background | 1, 2600 × 1400 px (26 × 14 u) | Own art, drawn in the editor | Play area backdrop | Done |
+| Wall tile, life icon, UI panel | 1 each | Own art, drawn in the editor | Walls, HUD lives, buttons and panels | Done |
+| Brick-break particle | 1 small burst | Unity built-in particle system, own material and sprite | Break feedback | Done |
+| Chocolate / candy shard sprites | 3 white shapes, tinted per brick | Own art, drawn in the editor | Pooled break fragments | Done |
+| UI font | Liberation Sans SDF | Ships with TextMesh Pro; SIL Open Font License 1.1, which permits redistribution. Licence file kept in `Assets/ThirdParty/TextMesh Pro/Fonts/` | All screens | Done (not the rounded face we wanted) |
+| SFX: paddle bounce, wall bounce, brick crack, brick break, power-up pickup, life lost, level clear, game over | 8 one-shots | Own work, synthesised in the editor from sine, triangle and noise tones | Feedback | Done |
+| Music | 1 short loop, menu only | — | Menu ambience | Cut |
 
 **Licence note.** We would rather author the sprites ourselves than inherit a licence we cannot
 read — the art here is simple shapes, which makes that realistic. Where we do use third-party
@@ -357,8 +360,10 @@ would silently un-pause the game.
 **Background size rule.** The background must fill the screen at every supported aspect ratio.
 With a 16 × 10 u play field, the widest view is 21:9 (about 23.3 × 10 u) and the tallest is 4:3
 (16 × 12 u), so the background is authored at **at least 24 × 12 u — 2400 × 1200 px at 100 PPU** —
-and centred on the play field. The edges are plain enough that the part cropped on a given
-screen does not matter.
+and centred on the play field. The shake margin from §5 and the shake itself widen what 21:9 can show to about 24.3 u, so
+the background we built is 26 × 14 u (2600 × 1400 px), and the camera clears to the same cream
+colour as a second guard. The edges are plain enough that the part cropped on a given screen does
+not matter.
 
 ---
 
@@ -405,19 +410,21 @@ graph TD
 | Script | Responsibility |
 |---|---|
 | `GameManager` | Owns the run state machine and the run's lives, score and level index |
-| `PaddleController` | Reads input, moves and clamps the paddle, owns its current width |
+| `PaddleController` | Reads input, moves and clamps the paddle, owns its current width and the expansion's timer coroutine |
 | `BallController` | Launch, constant-speed enforcement, and the offset-based paddle rebound |
 | `Brick` | Hit points, damage-state sprite swap, and reporting its own destruction |
 | `LevelManager` | Instantiates the current level layout and raises "level cleared" at zero breakables |
 | `PowerUpSpawner` | Rolls the drop chance on a brick's destruction and spawns at most one capsule |
-| `PowerUpPickup` | Falls, detects the paddle, and runs the expansion's timed effect |
+| `PowerUpPickup` | Falls, detects the paddle and tells it to expand; the capsule is gone once caught, so the timer lives on the paddle |
 | `DeadZone` | Detects the ball leaving the play area and reports it |
 | `CameraFitter` | Sets the camera size so the whole play field fits the current aspect ratio |
 | `ImpactFeedback` | Runs the hit-stop, screen shake, paddle squash and slow motion from §6 |
-| `UIManager` | Shows and hides the screens and updates the HUD values |
-| `AudioManager` | Plays one-shot SFX on request |
-| `HighScoreStore` | Reads and writes the single high-score integer |
-| `BrickVfxPool` | Holds and recycles the brick-break particle effects |
+| `UIManager` | Shows and hides the in-game screens and updates the HUD values |
+| `MainMenuUI` | The main menu and the How to Play panel |
+| `AudioManager` | Plays one-shot SFX on request; it sits on the GameManager object and travels with it |
+| `HighScoreStore` | Reads and writes the single high-score integer (a static class) |
+| `BrickVfxPool` | Holds and recycles the brick-break particle bursts and shards in two `ObjectPool`s |
+| `Shard` | One pooled fragment: falls, spins, fades, then returns itself to the pool |
 | `GameConfig` *(SO)* | Holds the tuning values from §3 |
 | `LevelDefinition` *(SO)* | Names one level and points at its layout prefab |
 
@@ -473,27 +480,27 @@ and Addressables or any asset-streaming system (there are three level prefabs).
 
 ### 8.1 MVP — the game is not a game without these
 
-- [ ] One complete, playable level
-- [ ] Paddle movement with clamping to the play area
-- [ ] Ball with constant speed, launch-from-paddle serve, and offset-based paddle rebound
-- [ ] One-hit bricks that are destroyed and removed
-- [ ] Score, and three lives with the life-loss reset
-- [ ] Main menu, game-over screen, victory screen, and a working restart
-- [ ] Win when the level is cleared; lose when lives reach zero
-- [ ] Camera fit and background size rule from §5–§6, with the HUD anchored to its corners
+- [x] One complete, playable level
+- [x] Paddle movement with clamping to the play area
+- [x] Ball with constant speed, launch-from-paddle serve, and offset-based paddle rebound
+- [x] One-hit bricks that are destroyed and removed
+- [x] Score, and three lives with the life-loss reset
+- [x] Main menu, game-over screen, victory screen, and a working restart
+- [x] Win when the level is cleared; lose when lives reach zero
+- [x] Camera fit and background size rule from §5–§6, with the HUD anchored to its corners
 - [ ] A Windows build checked at 16:9, 16:10, 4:3 and 21:9, fullscreen and windowed
 
 ### 8.2 Polish — if the MVP is done and playable
 
-- [ ] Expand to three hand-designed levels with the carry-over rules from §3
-- [ ] Two-hit bricks with a distinct cracked damage state
-- [ ] The single temporary paddle-expansion power-up
-- [ ] Pause menu
-- [ ] Sound effects for bounce, crack, break, pickup, life lost and level clear
-- [ ] Brick-break particle feedback, via the object pool
-- [ ] The impact pack from §6: hit-stop, screen shake, pooled shards, paddle squash
-- [ ] Last-brick slow motion on level clear
-- [ ] Local high score saved with PlayerPrefs
+- [x] Expand to three hand-designed levels with the carry-over rules from §3
+- [x] Two-hit bricks with a distinct cracked damage state
+- [x] The single temporary paddle-expansion power-up
+- [x] Pause menu
+- [x] Sound effects for bounce, crack, break, pickup, life lost and level clear
+- [x] Brick-break particle feedback, via the object pool
+- [x] The impact pack from §6: hit-stop, screen shake, pooled shards, paddle squash
+- [x] Last-brick slow motion on level clear
+- [x] Local high score saved with PlayerPrefs
 
 ### 8.3 Explicitly out of scope — we are **not** building these
 
@@ -523,6 +530,7 @@ and Addressables or any asset-streaming system (there are three level prefabs).
 | v0.3 | 2026-09-16 | Following the instructor's note that each platform must adapt to different screen sizes: added the camera-fit rule, HUD band, background size rule, window mode and the list of supported aspect ratios; added `CameraFitter`; moved the screen-size check from Polish into the MVP; stated that macOS is not a target. |
 | v0.4 | 2026-09-19 | Unity project created from the Universal 2D template (URP, 6000.3.20f1). Set Active Input Handling to Both so the legacy Input Manager in §4 actually works. |
 | v0.5 | 2026-09-25 | Added the impact pack — hit-stop, bounded screen shake, pooled shards, paddle squash and last-brick slow motion — with its tuning parameters, the `ImpactFeedback` script and the pause interaction rule. No gameplay rule changes: scoring, lives, brick damage and the power-up are exactly as approved. Reworded pillar 1 so the bounded shake does not contradict it. |
+| v0.6 | 2026-09-25 | Implementation recorded. Every MVP and polish item in §8 is built except the real Windows-build check. Render pipeline settled as URP 2D. The camera-fit formula in §5 now shows the shake margin that §1 and §6 already assumed, and the background is 26 × 14 u to cover it. §6's asset table records the actual sources: all art and sound is our own, and the only third-party asset is TextMesh Pro's Liberation Sans (SIL OFL 1.1); the menu music is cut. §7's table moves the expansion timer from the capsule to the paddle, since the capsule is destroyed when caught, and lists `MainMenuUI` and `Shard`. No gameplay rule changes. |
 
 ---
 
@@ -530,4 +538,6 @@ and Addressables or any asset-streaming system (there are three level prefabs).
 
 1. **Reference image.** See §2 — a self-captured or properly licensed *Breakout* screenshot is
    still to be added.
-2. **Render pipeline.** Built-in 2D or URP 2D, chosen when the Unity project is created.
+2. **Windows build check.** The §5 check of a real build at 16:9, 16:10, 4:3 and 21:9, fullscreen
+   and windowed, is still to do.
+3. **Playtest.** The §3 feel target (five classmates, three runs each) has not been run yet.
