@@ -62,6 +62,7 @@ namespace SweetBreaker
         private void OnEnable()
         {
             GameManager.Instance.StateChanged += HandleStateChanged;
+            GameManager.Instance.ServeStarted += Recentre;
             GameManager.Instance.LifeLost += EndExpansion;
         }
 
@@ -71,6 +72,7 @@ namespace SweetBreaker
                 return;
 
             GameManager.Instance.StateChanged -= HandleStateChanged;
+            GameManager.Instance.ServeStarted -= Recentre;
             GameManager.Instance.LifeLost -= EndExpansion;
         }
 
@@ -128,13 +130,14 @@ namespace SweetBreaker
 
         private void HandleStateChanged(GameState state)
         {
-            if (state == GameState.Serve)
-                Recentre();
-            else if (state == GameState.LevelClear)
+            if (state == GameState.LevelClear)
                 EndExpansion();
         }
 
-        /// <summary>Puts the paddle back in the middle of the field and hands control back to the keyboard.</summary>
+        /// <summary>
+        /// Puts the paddle back in the middle of the field for a new serve and hands control back to
+        /// the keyboard.
+        /// </summary>
         private void Recentre()
         {
             float centreX = (leftWall.bounds.max.x + rightWall.bounds.min.x) * 0.5f;

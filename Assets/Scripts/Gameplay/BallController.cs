@@ -29,9 +29,10 @@ namespace SweetBreaker
             spriteRenderer = GetComponent<SpriteRenderer>();
         }
 
+        // On a level clear the ball keeps flying through the slow motion; the banner removes it.
         private void OnEnable()
         {
-            GameManager.Instance.StateChanged += HandleStateChanged;
+            GameManager.Instance.ServeStarted += AttachToPaddle;
             GameManager.Instance.LifeLost += Remove;
             GameManager.Instance.LevelClearBannerShown += Remove;
         }
@@ -41,7 +42,7 @@ namespace SweetBreaker
             if (GameManager.Instance == null)
                 return;
 
-            GameManager.Instance.StateChanged -= HandleStateChanged;
+            GameManager.Instance.ServeStarted -= AttachToPaddle;
             GameManager.Instance.LifeLost -= Remove;
             GameManager.Instance.LevelClearBannerShown -= Remove;
         }
@@ -76,18 +77,9 @@ namespace SweetBreaker
             }
             else if (!collision.collider.TryGetComponent(out Brick _))
             {
-                // Bricks play their own crack or break sound.
+                // A brick's crack or break sound is played by LevelManager when the brick reports the hit.
                 GameManager.Instance.Audio.Play(Sfx.WallBounce);
             }
-        }
-
-        private void HandleStateChanged(GameState state)
-        {
-            // On LevelClear the ball keeps flying through the slow motion; the banner removes it.
-            if (state == GameState.Serve)
-                AttachToPaddle();
-            else if (state == GameState.GameOver || state == GameState.Victory)
-                Remove();
         }
 
         /// <summary>Locks the ball to the paddle's centre until the player launches it.</summary>

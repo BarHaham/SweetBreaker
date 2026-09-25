@@ -49,6 +49,12 @@ namespace SweetBreaker
         public event Action<int> ScoreChanged;
         public event Action<int> LivesChanged;
 
+        /// <summary>
+        /// A new ball goes onto the paddle: at the start of a run, after a lost life, and on a new level.
+        /// Not raised when a pause taken during Serve ends, so resuming never moves the paddle.
+        /// </summary>
+        public event Action ServeStarted;
+
         /// <summary>The ball reached the dead zone; raised before the serve delay starts.</summary>
         public event Action LifeLost;
 
@@ -198,7 +204,7 @@ namespace SweetBreaker
         {
             yield return new WaitForSeconds(config.ServeDelay);
             serveRoutine = null;
-            SetState(GameState.Serve);
+            BeginServe();
         }
 
         /// <summary>
@@ -225,7 +231,7 @@ namespace SweetBreaker
 
             LevelIndex++;
             LevelAdvanced?.Invoke(LevelIndex);
-            SetState(GameState.Serve);
+            BeginServe();
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -236,8 +242,19 @@ namespace SweetBreaker
             levelClearRoutine = null;
             feedbackTimeScale = 1f;
             AudioListener.pause = false;
-            SetState(scene.name == GameSceneName ? GameState.Serve : GameState.MainMenu);
+
+            if (scene.name == GameSceneName)
+                BeginServe();
+            else
+                SetState(GameState.MainMenu);
+
             ApplyTimeScale();
+        }
+
+        private void BeginServe()
+        {
+            SetState(GameState.Serve);
+            ServeStarted?.Invoke();
         }
 
         private void Pause()
