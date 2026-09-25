@@ -24,6 +24,7 @@ namespace SweetBreaker
         private Coroutine serveRoutine;
         private Coroutine levelClearRoutine;
         private GameState stateBeforePause;
+        private float feedbackTimeScale = 1f;
 
         /// <summary>One-shot sound effects; the AudioManager travels with this object.</summary>
         public AudioManager Audio { get; private set; }
@@ -109,6 +110,16 @@ namespace SweetBreaker
 
             AudioListener.pause = false;
             SetState(stateBeforePause);
+            ApplyTimeScale();
+        }
+
+        /// <summary>
+        /// Hit-stop and slow motion ask for their time scale here instead of writing Time.timeScale
+        /// themselves, so an effect that ends while the game is paused cannot un-pause it (GDD section 6).
+        /// </summary>
+        public void SetFeedbackTimeScale(float scale)
+        {
+            feedbackTimeScale = scale;
             ApplyTimeScale();
         }
 
@@ -215,6 +226,7 @@ namespace SweetBreaker
             StopAllCoroutines();
             serveRoutine = null;
             levelClearRoutine = null;
+            feedbackTimeScale = 1f;
             AudioListener.pause = false;
             SetState(scene.name == GameSceneName ? GameState.Serve : GameState.MainMenu);
             ApplyTimeScale();
@@ -231,7 +243,7 @@ namespace SweetBreaker
         // The only place in the game that writes Time.timeScale.
         private void ApplyTimeScale()
         {
-            Time.timeScale = State == GameState.Paused ? 0f : 1f;
+            Time.timeScale = State == GameState.Paused ? 0f : feedbackTimeScale;
         }
 
         private void ResetRun()
