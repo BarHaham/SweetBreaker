@@ -162,6 +162,15 @@ MonoBehaviour:
   levelManager: {fileID: 251247802}
   burstPrefab: {fileID: 49731032769949305, guid: ab388e59f1c909f46b974f8cf3c597ee, type: 3}
   burstPoolSize: 8
+  shardPrefab: {fileID: 8668824536600450675, guid: 45003e21e61220c4e88705b6de35d0ce, type: 3}
+  shardSprites:
+  - {fileID: 21300000, guid: 6b3392a747cc65049bfcbc9b8823f072, type: 3}
+  - {fileID: 21300000, guid: 478d74ebeffe01d4f8a75068434c2152, type: 3}
+  - {fileID: 21300000, guid: bb9255fd5755f0340aec0bc07a434cd2, type: 3}
+  shardPoolSize: 48
+  shardsPerBreak: 6
+  shardSpeedRange: {x: 2.5, y: 5.5}
+  maxShardSpin: 720
 --- !u!4 &102701845
 Transform:
   m_ObjectHideFlags: 0
