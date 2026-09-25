@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86e20c5021d50e047a3d179a041feb99, type: 3}
+  m_Name: GameConfig
+  m_EditorClassIdentifier: Assembly-CSharp::SweetBreaker.GameConfig
+  <PaddleSpeed>k__BackingField: 18
+  <PaddleWidth>k__BackingField: 2.2
+  <PaddleExpandMultiplier>k__BackingField: 1.5
+  <BallSpeed>k__BackingField: 8
+  <LaunchAngle>k__BackingField: 60
+  <MaxBounceAngle>k__BackingField: 75
+  <MinVerticalSpeedFraction>k__BackingField: 0.25
+  <StallTimeout>k__BackingField: 1.5
+  <StartingLives>k__BackingField: 3
+  <ServeDelay>k__BackingField: 1
+  <LevelClearDelay>k__BackingField: 1.5
+  <ScoreOneHitBreak>k__BackingField: 50
+  <ScoreTwoHitCrack>k__BackingField: 25
+  <ScoreTwoHitBreak>k__BackingField: 75
+  <PowerUpDropChance>k__BackingField: 0.15
+  <PowerUpFallSpeed>k__BackingField: 3
+  <PowerUpDuration>k__BackingField: 8
+  <PlayFieldSize>k__BackingField: {x: 16, y: 10}
+  <HudBandHeight>k__BackingField: 1
+  <HitStopDuration>k__BackingField: 0.05
+  <ScreenShakeDuration>k__BackingField: 0.12
+  <ScreenShakeMagnitude>k__BackingField: 0.15
+  <PaddleSquashDuration>k__BackingField: 0.1
+  <LastBrickSlowMoScale>k__BackingField: 0.35
+  <LastBrickSlowMoDuration>k__BackingField: 0.8
