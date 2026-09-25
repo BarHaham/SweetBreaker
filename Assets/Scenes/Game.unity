@@ -130,6 +130,53 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61e0fdff986779946bc2286c54f3f141, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SweetBreaker.PaddleController
+--- !u!1 &102701843
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 102701845}
+  - component: {fileID: 102701844}
+  m_Layer: 0
+  m_Name: BrickVfxPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &102701844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 102701843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0b5861b246e0e8459bc3462a72a1868, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SweetBreaker.BrickVfxPool
+  levelManager: {fileID: 251247802}
+  burstPrefab: {fileID: 49731032769949305, guid: ab388e59f1c909f46b974f8cf3c597ee, type: 3}
+  burstPoolSize: 8
+--- !u!4 &102701845
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 102701843}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &113104663
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2842,3 +2889,4 @@ SceneRoots:
   - {fileID: 813581732}
   - {fileID: 1530092439}
   - {fileID: 1783630394}
+  - {fileID: 102701845}

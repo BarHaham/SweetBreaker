@@ -20,10 +20,14 @@ namespace SweetBreaker
         [SerializeField] private BrickType type = BrickType.OneHit;
         [SerializeField, Tooltip("Two-hit bricks only: the sprite shown after the first hit.")]
         private Sprite crackedSprite;
+        [SerializeField, Tooltip("Colour of the pieces it throws when it breaks: bright for candy, dark for chocolate.")]
+        private Color breakColor = Color.white;
 
         private SpriteRenderer spriteRenderer;
         private LevelManager owner;
         private int hitPointsLeft;
+
+        public Color BreakColor => breakColor;
 
         private void Awake()
         {

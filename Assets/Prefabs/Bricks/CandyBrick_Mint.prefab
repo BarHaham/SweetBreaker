@@ -152,3 +152,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SweetBreaker.Brick
   config: {fileID: 11400000, guid: d3be06bcde31bac4fb555f7f4387d521, type: 2}
+  type: 0
+  crackedSprite: {fileID: 0}
+  breakColor: {r: 0.49803922, g: 0.8784314, b: 0.7529412, a: 1}
