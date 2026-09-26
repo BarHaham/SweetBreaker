@@ -152,7 +152,9 @@ settled in §8, not here.
 
   Wall bounces, paddle bounces, power-up pickups, remaining lives and level completion award
   nothing. Score is never reduced. The high score is written only when a run ends (game over or
-  victory) and only if the run's score is strictly greater than the stored one.
+  victory) and only if the run's score is strictly greater than the stored one. The HUD's `HIGH`
+  readout does not wait for that: it shows the higher of the stored score and the run's score, so
+  a record falls on screen the moment it is beaten (§5).
 - **Failure and reset.** A trigger volume below the paddle line is the dead zone. When the ball
   enters it: lives decrease by one, the ball is removed, any active power-up ends immediately and
   the paddle snaps back to its base width, and after `serveDelay` (1.0 s) the paddle is recentred
@@ -260,7 +262,9 @@ reach with the paddle, on the keys or the mouse. If either fails, `ballSpeed` an
    editor). The stored high score is shown bottom-left.
 2. **How to Play** — a static text panel listing the controls from §4 and the three scoring
    events; one **BACK** button.
-3. **Gameplay HUD** — `SCORE` (top-left, anchored top-left), `HIGH` (top-centre), `LIVES` as three
+3. **Gameplay HUD** — `SCORE` (top-left, anchored top-left), `HIGH` (top-centre; live, so once the
+   run passes the stored record it shows the run's score, turning gold with one short pop at the
+   moment the record falls, unless there was no record yet), `LIVES` as three
    candy icons that are removed one at a time (top-right, anchored top-right). The power-up timer
    is not in the corners: it is a thin bar drawn in the world right under the paddle, where the
    player is already looking. It drains from both ends toward the centre, the way the paddle is
@@ -440,7 +444,7 @@ graph TD
 | `CameraFitter` | Sets the camera size so the whole play field fits the current aspect ratio |
 | `ImpactFeedback` | Runs the hit-stop, screen shake, paddle squash and slow motion from §6 |
 | `ExpansionTimerBar` | Draws the power-up's time left as a bar under the paddle, and flashes it near the end (§5) |
-| `UIManager` | Shows and hides the in-game screens and updates the HUD values |
+| `UIManager` | Shows and hides the in-game screens and updates the HUD values, including the live high score |
 | `MainMenuUI` | The main menu and the How to Play panel |
 | `AudioManager` | Plays one-shot SFX on request; it sits on the GameManager object and travels with it |
 | `HighScoreStore` | Reads and writes the single high-score integer (a static class) |
@@ -555,7 +559,7 @@ and Addressables or any asset-streaming system (there are three level prefabs).
 | v0.7 | 2026-09-26 | Art pass. The sprites are redrawn to match the visual direction in this section (wrapped candies, 4 × 2 chocolate bars with a clearly broken cracked state, a gingham counter with a sprinkled tray) by an editor tool, `SpriteArtGenerator`, so their origin is in the repository. Recorded the drop-shadow margins and the Global Light 2D rule in the technical art rules. No gameplay rule changes. |
 | v0.8 | 2026-09-26 | Tuning after our own first playtest, where the paddle was too fast to control: `paddleSpeed` goes from 18 to 12 u/s, and a new `paddleAccelerationTime` (0.12 s) ramps the keyboard up to it. The same playtest found a ball stuck to the side of a moving paddle and squeezed up the wall; §3's paddle rebound now says what a side hit does (the ball glances off and is missed), which the rule had left open. Scoring, lives, levels and the power-up are unchanged. |
 | v0.9 | 2026-09-26 | Second playtest: the keys were still very fast while the mouse felt right. The mouse moves at the hand's pace with `paddleSpeed` only as its cap, but a held key always runs at full speed, so the keyboard now has its own speed: a new `paddleKeyboardSpeed` of 9 u/s, with `paddleAccelerationTime` going from 0.12 to 0.15 s, while `paddleSpeed` stays 12 u/s for the mouse. §3 states the trade-off. The main menu's high-score plate is widened from 420 to 460 px: any score of 1000 or more wrapped onto a second line, and the plate now fits the maximum possible score of 8500. Scoring, lives, levels and the power-up are unchanged. |
-| v0.10 | 2026-09-26 | Playtest note: the power-up timer bar under the score went unnoticed, because the player is watching the paddle. It moves to a thin bar in the world right under the paddle, drawn by a new `ExpansionTimerBar` script from a new 9-sliced sprite; it drains toward the centre and flashes for the last quarter. §5, §6 and §7 are updated to match. Scoring, lives, levels and the power-up are unchanged. |
+| v0.10 | 2026-09-26 | Playtest note: the power-up timer bar under the score went unnoticed, because the player is watching the paddle. It moves to a thin bar in the world right under the paddle, drawn by a new `ExpansionTimerBar` script from a new 9-sliced sprite; it drains toward the centre and flashes for the last quarter. §5, §6 and §7 are updated to match. The HUD's `HIGH` readout now updates live: it shows the higher of the stored record and the run's score, and turns gold with one short pop when a record falls. PlayerPrefs is still written only when the run ends (§3). Scoring, lives, levels and the power-up are unchanged. |
 
 ---
 

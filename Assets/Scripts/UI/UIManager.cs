@@ -14,9 +14,17 @@ namespace SweetBreaker
         // Stops the panicked click that follows a lost ball from pressing a button (GDD section 4).
         private const float EndScreenInputLockout = 0.75f;
 
+        // The HIGH plate swells by this much, for this long, the moment the run takes the record.
+        private const float RecordPopScale = 0.2f;
+        private const float RecordPopDuration = 0.35f;
+
         [Header("HUD")]
         [SerializeField] private TMP_Text scoreText;
         [SerializeField] private TMP_Text highScoreText;
+        [SerializeField, Tooltip("The HIGH plate, which pops once when this run passes the stored record.")]
+        private RectTransform highScorePlate;
+        [SerializeField, Tooltip("HIGH turns this colour once this run holds the record.")]
+        private Color recordColour = new Color(1f, 0.82f, 0.25f);
         [SerializeField, Tooltip("One candy per life, removed from the last one down.")]
         private Image[] lifeIcons;
         [SerializeField] private GameObject servePrompt;
@@ -37,6 +45,8 @@ namespace SweetBreaker
         [SerializeField] private GameObject newHighScoreLine;
         [SerializeField] private Button playAgainButton;
         [SerializeField] private Button endMainMenuButton;
+
+        private bool recordBroken;
 
         private void Awake()
         {
@@ -71,7 +81,6 @@ namespace SweetBreaker
             GameManager game = GameManager.Instance;
             ShowScore(game.Score);
             ShowLives(game.Lives);
-            highScoreText.text = $"HIGH  {game.HighScore}";
             HandleStateChanged(game.State);
         }
 
@@ -109,6 +118,38 @@ namespace SweetBreaker
         private void ShowScore(int score)
         {
             scoreText.text = $"SCORE  {score}";
+            ShowHighScore(score);
+        }
+
+        /// <summary>
+        /// HIGH shows the stored best, or this run's score once it passes it, so the record falls on
+        /// screen as it happens. It is still only saved when the run ends (GDD section 3).
+        /// </summary>
+        private void ShowHighScore(int score)
+        {
+            int storedBest = GameManager.Instance.HighScore;
+            highScoreText.text = $"HIGH  {Mathf.Max(storedBest, score)}";
+
+            // The very first run has no record to beat, so there is nothing to celebrate.
+            if (recordBroken || storedBest == 0 || score <= storedBest)
+                return;
+
+            recordBroken = true;
+            highScoreText.color = recordColour;
+            StartCoroutine(PopHighScorePlate());
+        }
+
+        /// <summary>A quick swell and settle, on unscaled time so the brick's hit-stop cannot hold it.</summary>
+        private IEnumerator PopHighScorePlate()
+        {
+            for (float t = 0f; t < RecordPopDuration; t += Time.unscaledDeltaTime)
+            {
+                float swell = Mathf.Sin(t / RecordPopDuration * Mathf.PI);
+                highScorePlate.localScale = Vector3.one * (1f + RecordPopScale * swell);
+                yield return null;
+            }
+
+            highScorePlate.localScale = Vector3.one;
         }
 
         private void ShowLives(int lives)
