@@ -81,13 +81,14 @@ namespace SweetBreaker
             ResetRun();
         }
 
+        // Instance is deliberately not cleared here. When play stops, this object can be destroyed
+        // before the paddle and ball run their last Update; a stale reference lets them read the final
+        // state instead of throwing, and Unity's == already treats a destroyed Instance as null, so the
+        // duplicate check in Awake still works.
         private void OnDestroy()
         {
-            if (Instance != this)
-                return;
-
-            SceneManager.sceneLoaded -= OnSceneLoaded;
-            Instance = null;
+            if (Instance == this)
+                SceneManager.sceneLoaded -= OnSceneLoaded;
         }
 
         private void Update()
