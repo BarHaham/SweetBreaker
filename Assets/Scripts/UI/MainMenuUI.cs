@@ -14,6 +14,8 @@ namespace SweetBreaker
         [SerializeField] private Button playButton;
         [SerializeField] private Button howToPlayButton;
         [SerializeField] private Button quitButton;
+        [SerializeField, Tooltip("The main menu's buttons, taken out of keyboard navigation while How to Play covers them.")]
+        private CanvasGroup menuButtons;
         [SerializeField] private TMP_Text highScoreText;
 
         [Header("How to Play")]
@@ -31,15 +33,24 @@ namespace SweetBreaker
         private void Start()
         {
             highScoreText.text = $"HIGH SCORE  {HighScoreStore.Load()}";
-            howToPlayPanel.SetActive(false);
+            ShowHowToPlay(false);
 
             // Selected so Enter confirms it without touching the mouse (GDD section 4).
             EventSystem.current.SetSelectedGameObject(playButton.gameObject);
         }
 
+        private void Update()
+        {
+            GameObject defaultButton = howToPlayPanel.activeSelf ? backButton.gameObject : playButton.gameObject;
+            MenuFocus.RestoreOnKeyboardInput(defaultButton);
+        }
+
         private void ShowHowToPlay(bool show)
         {
             howToPlayPanel.SetActive(show);
+
+            // Otherwise the arrow keys could walk from BACK onto the menu buttons hidden behind the panel.
+            menuButtons.interactable = !show;
             EventSystem.current.SetSelectedGameObject(show ? backButton.gameObject : howToPlayButton.gameObject);
         }
 

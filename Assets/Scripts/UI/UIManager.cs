@@ -88,6 +88,11 @@ namespace SweetBreaker
             float timeLeft = paddle.ExpansionTimeLeft01;
             powerUpBar.SetActive(timeLeft > 0f);
             powerUpBarFill.sizeDelta = new Vector2(powerUpBarFullWidth * timeLeft, powerUpBarFill.sizeDelta.y);
+
+            if (pauseScreen.activeSelf)
+                MenuFocus.RestoreOnKeyboardInput(resumeButton.gameObject);
+            else if (endScreen.activeSelf && playAgainButton.interactable)
+                MenuFocus.RestoreOnKeyboardInput(playAgainButton.gameObject);
         }
 
         private void HandleStateChanged(GameState state)
