@@ -79,9 +79,15 @@ namespace SweetBreaker
         private void Update()
         {
             if (GameManager.Instance.IsInPlay)
+            {
                 ReadInput();
-            else
-                keyboardAxis = 0f;
+                return;
+            }
+
+            // The mouse moving while the game is paused (or alt-tabbed) must not take the paddle over
+            // on resume, so only movement during play counts.
+            keyboardAxis = 0f;
+            lastMousePosition = Input.mousePosition;
         }
 
         private void FixedUpdate()
