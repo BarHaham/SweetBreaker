@@ -29,7 +29,9 @@ namespace SweetBreaker
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.TryGetComponent(out PaddleController paddle))
+            // A catch only counts while the run is in play, so nothing can widen the paddle after the
+            // level-clear or game-over transition has already ended the effect (GDD section 3).
+            if (other.TryGetComponent(out PaddleController paddle) && GameManager.Instance.IsInPlay)
             {
                 paddle.Expand();
                 GameManager.Instance.Audio.Play(Sfx.PowerUpPickup);

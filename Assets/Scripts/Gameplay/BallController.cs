@@ -139,7 +139,7 @@ namespace SweetBreaker
         /// </summary>
         private void ReboundFrom(PaddleController hitPaddle)
         {
-            float offset = (rb.position.x - hitPaddle.transform.position.x) / (hitPaddle.Width * 0.5f);
+            float offset = (rb.position.x - hitPaddle.CentreX) / (hitPaddle.Width * 0.5f);
             float angle = Mathf.Clamp(offset, -1f, 1f) * config.MaxBounceAngle * Mathf.Deg2Rad;
             rb.linearVelocity = new Vector2(Mathf.Sin(angle), Mathf.Cos(angle)) * config.BallSpeed;
         }

@@ -33,6 +33,12 @@ namespace SweetBreaker
         /// <summary>Current width in world units.</summary>
         public float Width { get; private set; }
 
+        /// <summary>
+        /// The paddle's centre as the physics engine has it. Collision code should read this rather
+        /// than the Transform, which interpolation can leave up to a physics step behind.
+        /// </summary>
+        public float CentreX => rb.position.x;
+
         /// <summary>-1 or +1 while moving left or right during the last physics step, 0 when still.</summary>
         public int MoveDirection { get; private set; }
 
