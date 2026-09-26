@@ -10,6 +10,18 @@ check a real Windows build at every supported aspect ratio, and playtest.**
 
 Submission deadline: 2026-10-04. Engine: Unity 6000.3.20f1 (URP 2D). Platform: Windows.
 
+## Screenshots
+
+Captured from the running game (Unity Game view) at the resolutions shown.
+
+| | |
+|---|---|
+| ![Main menu](Docs/images/screenshots/main-menu.jpg) Main menu | ![Level 1 mid-rally](Docs/images/screenshots/level1-rally-16x9.jpg) Level 1 mid-rally, 16:9: both chocolate bars cracked, a capsule falling |
+| ![Level 2 at 16:10](Docs/images/screenshots/level2-16x10.jpg) Level 2 at 16:10, with shards from a break | ![Level 3 at 4:3](Docs/images/screenshots/level3-4x3.jpg) Level 3 at 4:3 |
+| ![Level 3 at 21:9](Docs/images/screenshots/level3-21x9.jpg) Level 3 at 21:9 | ![Level clear](Docs/images/screenshots/level-clear.jpg) The level-clear banner |
+| ![Pause](Docs/images/screenshots/pause.jpg) Pause | ![How to play](Docs/images/screenshots/how-to-play.jpg) How to Play |
+| ![Game over](Docs/images/screenshots/game-over.jpg) Game over | ![Victory](Docs/images/screenshots/victory.jpg) Victory |
+
 ## Running it
 
 1. Open the project folder in Unity **6000.3.20f1** (the exact version the course requires).
@@ -58,7 +70,8 @@ Docs/                   The Game Design Document and its diagrams
 ## Assets and licences
 
 All sprites and all eight sound effects are our own, generated in the Unity editor from simple
-shapes and synthesised tones. The only third-party asset is the Liberation Sans font that ships
+shapes and synthesised tones. The sprites come from an editor tool in the repository,
+`Assets/Editor/SpriteArtGenerator.cs` (menu: *Sweet Breaker > Regenerate Sprites*). The only third-party asset is the Liberation Sans font that ships
 with TextMesh Pro, under the SIL Open Font License 1.1 (licence file in
 `Assets/ThirdParty/TextMesh Pro/Fonts/`). Details are in GDD §6.
 

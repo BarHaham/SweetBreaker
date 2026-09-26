@@ -542,6 +542,9 @@ and Addressables or any asset-streaming system (there are three level prefabs).
 
 1. **Reference image.** See §2 — a self-captured or properly licensed *Breakout* screenshot is
    still to be added.
-2. **Windows build check.** The §5 check of a real build at 16:9, 16:10, 4:3 and 21:9, fullscreen
-   and windowed, is still to do.
+2. **Windows build check.** All four aspect ratios were checked in the editor's Game view at
+   1920 × 1080, 1920 × 1200, 1440 × 1080 and 2560 × 1080: the whole field is visible, the
+   background fills the screen, the HUD sits in its corners above the top brick row, and the menu
+   buttons stay on screen (screenshots in `Docs/images/screenshots/`). The §5 check of a real
+   build, fullscreen and windowed, is still to do.
 3. **Playtest.** The §3 feel target (five classmates, three runs each) has not been run yet.
