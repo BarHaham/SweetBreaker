@@ -120,8 +120,9 @@ namespace SweetBreaker
 
         private void ShowLives(int lives)
         {
+            // Deactivated rather than hidden, so the layout re-centres the candies that are left.
             for (int i = 0; i < lifeIcons.Length; i++)
-                lifeIcons[i].enabled = i < lives;
+                lifeIcons[i].gameObject.SetActive(i < lives);
         }
 
         /// <summary>The level stays visible behind the dimmed overlay (GDD section 5).</summary>
