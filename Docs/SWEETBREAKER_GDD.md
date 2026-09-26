@@ -127,7 +127,11 @@ settled in §8, not here.
   `offset = clamp((ball.x - paddle.x) / (paddleWidth / 2), -1, 1)` and send the ball out at
   `offset * maxBounceAngle` degrees from straight up, at `ballSpeed`. Centre hit → straight up;
   edge hit → a shallow 75° shot. This is what turns the paddle into an aiming device and is what
-  pillar 2 protects.
+  pillar 2 protects. The aimed rebound is for the top face and its corners (ball centre level with
+  the top face or above). A ball that has already dropped below the top face is a miss: touching
+  the paddle's side only knocks it away sideways with its vertical direction unchanged, and the
+  paddle stops colliding with it until the next serve (or until it is back above the paddle). That
+  way a moving paddle can never carry the ball along and squeeze it up the side wall.
 - **Wall rebound.** Side and top walls reflect the ball normally (frictionless, fully elastic
   physics material), after which the speed re-normalisation above still applies.
 - **Anti-stall.** If the ball's vertical speed stays below `minVerticalSpeedFraction × ballSpeed`
@@ -538,7 +542,7 @@ and Addressables or any asset-streaming system (there are three level prefabs).
 | v0.5 | 2026-09-25 | Added the impact pack — hit-stop, bounded screen shake, pooled shards, paddle squash and last-brick slow motion — with its tuning parameters, the `ImpactFeedback` script and the pause interaction rule. No gameplay rule changes: scoring, lives, brick damage and the power-up are exactly as approved. Reworded pillar 1 so the bounded shake does not contradict it. |
 | v0.6 | 2026-09-25 | Implementation recorded. Every MVP and polish item in §8 is built except the real Windows-build check. Render pipeline settled as URP 2D. The camera-fit formula in §5 now shows the shake margin that §1 and §6 already assumed, and the background is 26 × 14 u to cover it. §6's asset table records the actual sources: all art and sound is our own, and the only third-party asset is TextMesh Pro's Liberation Sans (SIL OFL 1.1); the menu music is cut. §7's table moves the expansion timer from the capsule to the paddle, since the capsule is destroyed when caught, and lists `MainMenuUI` and `Shard`. No gameplay rule changes. |
 | v0.7 | 2026-09-26 | Art pass. The sprites are redrawn to match the visual direction in this section (wrapped candies, 4 × 2 chocolate bars with a clearly broken cracked state, a gingham counter with a sprinkled tray) by an editor tool, `SpriteArtGenerator`, so their origin is in the repository. Recorded the drop-shadow margins and the Global Light 2D rule in the technical art rules. No gameplay rule changes. |
-| v0.8 | 2026-09-26 | Tuning after our own first playtest, where the paddle was too fast to control: `paddleSpeed` goes from 18 to 12 u/s, and a new `paddleAccelerationTime` (0.12 s) ramps the keyboard up to it. Scoring, lives, levels and the power-up are unchanged. |
+| v0.8 | 2026-09-26 | Tuning after our own first playtest, where the paddle was too fast to control: `paddleSpeed` goes from 18 to 12 u/s, and a new `paddleAccelerationTime` (0.12 s) ramps the keyboard up to it. The same playtest found a ball stuck to the side of a moving paddle and squeezed up the wall; §3's paddle rebound now says what a side hit does (the ball glances off and is missed), which the rule had left open. Scoring, lives, levels and the power-up are unchanged. |
 
 ---
 

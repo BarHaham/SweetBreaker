@@ -19,13 +19,17 @@ namespace SweetBreaker
         private float serveHeight = 0.38f;
 
         private Rigidbody2D rb;
+        private Collider2D ballCollider;
         private SpriteRenderer spriteRenderer;
         private bool isServing;
         private float stallTimer;
+        private Vector2 velocityBeforeStep;
+        private Collider2D ignoredPaddleCollider;
 
         private void Awake()
         {
             rb = GetComponent<Rigidbody2D>();
+            ballCollider = GetComponent<Collider2D>();
             spriteRenderer = GetComponent<SpriteRenderer>();
         }
 
@@ -66,13 +70,22 @@ namespace SweetBreaker
 
             KeepConstantSpeed();
             PreventStall();
+            RestorePaddleContactOnceClear();
+
+            // The physics step runs next, so this is the velocity the ball meets anything with.
+            velocityBeforeStep = rb.linearVelocity;
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
             if (collision.collider.TryGetComponent(out PaddleController hitPaddle))
             {
-                ReboundFrom(hitPaddle);
+                // A centre level with the top face or above means the top face or its corner was hit.
+                if (rb.position.y >= collision.collider.bounds.max.y)
+                    ReboundFrom(hitPaddle);
+                else
+                    GlanceOffSide(hitPaddle, collision.collider);
+
                 GameManager.Instance.Audio.Play(Sfx.PaddleBounce);
             }
             else if (!collision.collider.TryGetComponent(out Brick _))
@@ -91,6 +104,7 @@ namespace SweetBreaker
             spriteRenderer.enabled = true;
             rb.bodyType = RigidbodyType2D.Kinematic;
             rb.linearVelocity = Vector2.zero;
+            RestorePaddleContact();
             FollowPaddle();
             transform.position = rb.position;
         }
@@ -142,6 +156,36 @@ namespace SweetBreaker
             float offset = (rb.position.x - hitPaddle.CentreX) / (hitPaddle.Width * 0.5f);
             float angle = Mathf.Clamp(offset, -1f, 1f) * config.MaxBounceAngle * Mathf.Deg2Rad;
             rb.linearVelocity = new Vector2(Mathf.Sin(angle), Mathf.Cos(angle)) * config.BallSpeed;
+        }
+
+        /// <summary>
+        /// A ball that has dropped below the paddle's top face is already missed: the paddle's side
+        /// only knocks it away, and the paddle stops touching it, so a moving paddle can never carry
+        /// the ball along and squeeze it up the side wall.
+        /// </summary>
+        private void GlanceOffSide(PaddleController hitPaddle, Collider2D paddleCollider)
+        {
+            float away = rb.position.x < hitPaddle.CentreX ? -1f : 1f;
+            rb.linearVelocity = new Vector2(Mathf.Abs(velocityBeforeStep.x) * away, velocityBeforeStep.y);
+
+            Physics2D.IgnoreCollision(ballCollider, paddleCollider, true);
+            ignoredPaddleCollider = paddleCollider;
+        }
+
+        /// <summary>A ball knocked back up above the paddle can land on it again.</summary>
+        private void RestorePaddleContactOnceClear()
+        {
+            if (ignoredPaddleCollider != null && ballCollider.bounds.min.y > ignoredPaddleCollider.bounds.max.y)
+                RestorePaddleContact();
+        }
+
+        private void RestorePaddleContact()
+        {
+            if (ignoredPaddleCollider == null)
+                return;
+
+            Physics2D.IgnoreCollision(ballCollider, ignoredPaddleCollider, false);
+            ignoredPaddleCollider = null;
         }
 
         private void KeepConstantSpeed()
