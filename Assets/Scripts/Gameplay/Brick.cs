@@ -42,13 +42,16 @@ namespace SweetBreaker
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            // Destroy is deferred to the end of the frame, so a second contact this step must not count.
-            if (hitPointsLeft > 0 && collision.collider.TryGetComponent(out BallController _))
+            if (collision.collider.TryGetComponent(out BallController _))
                 TakeHit();
         }
 
         private void TakeHit()
         {
+            // Destroy is deferred to the end of the frame, so a hit on an already-broken brick must not count.
+            if (hitPointsLeft <= 0)
+                return;
+
             hitPointsLeft--;
 
             if (hitPointsLeft > 0)
