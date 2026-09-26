@@ -14,7 +14,7 @@
 | **Engine / Unity version** | Unity **6000.3.20f1** (Unity 6.3 LTS), 2D — the exact version required by the course. No other editor version is used. Render pipeline: URP 2D (the Universal 2D template). |
 | **Orientation & reference resolution** | Landscape, 1920 × 1080 reference. Supported aspect ratios: 16:9, 16:10, 4:3 and 21:9 (see §5) |
 | **Expected session length** | 3–6 minutes for a full three-level run (initial estimate) |
-| **Document version** | v0.9 — 2026-09-26 |
+| **Document version** | v0.10 — 2026-09-26 |
 
 ---
 
@@ -261,9 +261,11 @@ reach with the paddle, on the keys or the mouse. If either fails, `ballSpeed` an
 2. **How to Play** — a static text panel listing the controls from §4 and the three scoring
    events; one **BACK** button.
 3. **Gameplay HUD** — `SCORE` (top-left, anchored top-left), `HIGH` (top-centre), `LIVES` as three
-   candy icons that are removed one at a time (top-right, anchored top-right), and a thin
-   power-up timer bar under the score that is hidden whenever no power-up is active. During the
-   Serve state only, a centred "PRESS SPACE TO LAUNCH" prompt.
+   candy icons that are removed one at a time (top-right, anchored top-right). The power-up timer
+   is not in the corners: it is a thin bar drawn in the world right under the paddle, where the
+   player is already looking. It drains from both ends toward the centre, the way the paddle is
+   about to shrink, flashes for the last quarter of the time, and is hidden whenever no power-up
+   is active. During the Serve state only, a centred "PRESS SPACE TO LAUNCH" prompt.
    **Deliberately absent from the HUD:** no timer, no combo counter, no level-progress bar, no
    brick counter, no power-up inventory, no pause button drawn on screen. The play area is the
    thing the player is reading; four numbers is the whole HUD.
@@ -327,6 +329,7 @@ licence to track for them. The only third-party asset is the UI font that ships 
 | Paddle sprite | 1, 9-sliced so the power-up stretches the body and not the ends | Own art, drawn in the editor | Player paddle | Done |
 | Ball sprite | 1 | Own art, drawn in the editor | Ball | Done |
 | Power-up capsule sprite | 1 | Own art, drawn in the editor | Paddle expansion pickup | Done |
+| Power-up timer bar sprite | 1 white pill, 9-sliced along X and tinted per use | Own art, drawn in the editor | Track and fill of the timer under the paddle | Done |
 | Background | 1, 2600 × 1400 px (26 × 14 u) | Own art, same generator: a pink gingham counter with a lighter, faintly sprinkled tray under the play field | Play area backdrop | Done |
 | Wall tile, life icon, UI panel | 1 each | Own art, drawn in the editor | Walls, HUD lives, buttons and panels | Done |
 | Brick-break particle | 1 small burst | Unity built-in particle system, own material and sprite | Break feedback | Done |
@@ -410,6 +413,7 @@ graph TD
     LM --> PS["PowerUpSpawner<br/>drop roll, spawns capsule"]
     PS --> PU["PowerUpPickup<br/>falls, applies expansion"]
     PU --> PC["PaddleController<br/>input, movement, width"]
+    PC --> ET["ExpansionTimerBar<br/>power-up time left, under the paddle"]
 
     BA["BallController<br/>launch, constant speed, rebound"] --> PC
     BR --> VP["BrickVfxPool<br/>pooled break effects"]
@@ -435,6 +439,7 @@ graph TD
 | `DeadZone` | Detects the ball leaving the play area and reports it |
 | `CameraFitter` | Sets the camera size so the whole play field fits the current aspect ratio |
 | `ImpactFeedback` | Runs the hit-stop, screen shake, paddle squash and slow motion from §6 |
+| `ExpansionTimerBar` | Draws the power-up's time left as a bar under the paddle, and flashes it near the end (§5) |
 | `UIManager` | Shows and hides the in-game screens and updates the HUD values |
 | `MainMenuUI` | The main menu and the How to Play panel |
 | `AudioManager` | Plays one-shot SFX on request; it sits on the GameManager object and travels with it |
@@ -550,6 +555,7 @@ and Addressables or any asset-streaming system (there are three level prefabs).
 | v0.7 | 2026-09-26 | Art pass. The sprites are redrawn to match the visual direction in this section (wrapped candies, 4 × 2 chocolate bars with a clearly broken cracked state, a gingham counter with a sprinkled tray) by an editor tool, `SpriteArtGenerator`, so their origin is in the repository. Recorded the drop-shadow margins and the Global Light 2D rule in the technical art rules. No gameplay rule changes. |
 | v0.8 | 2026-09-26 | Tuning after our own first playtest, where the paddle was too fast to control: `paddleSpeed` goes from 18 to 12 u/s, and a new `paddleAccelerationTime` (0.12 s) ramps the keyboard up to it. The same playtest found a ball stuck to the side of a moving paddle and squeezed up the wall; §3's paddle rebound now says what a side hit does (the ball glances off and is missed), which the rule had left open. Scoring, lives, levels and the power-up are unchanged. |
 | v0.9 | 2026-09-26 | Second playtest: the keys were still very fast while the mouse felt right. The mouse moves at the hand's pace with `paddleSpeed` only as its cap, but a held key always runs at full speed, so the keyboard now has its own speed: a new `paddleKeyboardSpeed` of 9 u/s, with `paddleAccelerationTime` going from 0.12 to 0.15 s, while `paddleSpeed` stays 12 u/s for the mouse. §3 states the trade-off. The main menu's high-score plate is widened from 420 to 460 px: any score of 1000 or more wrapped onto a second line, and the plate now fits the maximum possible score of 8500. Scoring, lives, levels and the power-up are unchanged. |
+| v0.10 | 2026-09-26 | Playtest note: the power-up timer bar under the score went unnoticed, because the player is watching the paddle. It moves to a thin bar in the world right under the paddle, drawn by a new `ExpansionTimerBar` script from a new 9-sliced sprite; it drains toward the centre and flashes for the last quarter. §5, §6 and §7 are updated to match. Scoring, lives, levels and the power-up are unchanged. |
 
 ---
 

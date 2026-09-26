@@ -38,11 +38,6 @@
     <text x="12" y="10" font-size="8" fill="#999999">↖ anchored top-left</text>
     <text x="438" y="10" font-size="8" fill="#999999" text-anchor="end">anchored top-right ↗</text>
 
-    <!-- power-up timer bar -->
-    <rect x="12" y="36" width="110" height="7" fill="#ffffff" stroke="#1b1b1b" stroke-width="1"/>
-    <rect x="13" y="37" width="62" height="5" fill="#9ad07f"/>
-    <text x="128" y="43" font-size="9" fill="#555555">power-up remaining (hidden when inactive)</text>
-
     <!-- brick field -->
     <g stroke="#1b1b1b" stroke-width="1">
       <rect x="60" y="62" width="46" height="16" fill="#f6b6c8"/><rect x="110" y="62" width="46" height="16" fill="#f6b6c8"/>
@@ -66,6 +61,10 @@
     <line x1="52" y1="55" x2="414" y2="55" stroke="#999999" stroke-width="2"/>
     <circle cx="200" cy="170" r="6" fill="#ffffff" stroke="#1b1b1b" stroke-width="2"/>
     <rect x="165" y="232" width="70" height="11" rx="5" fill="#ffffff" stroke="#1b1b1b" stroke-width="2"/>
+    <!-- power-up timer bar: under the paddle, drains toward the centre -->
+    <rect x="171" y="247" width="58" height="4" rx="2" fill="#ffffff" stroke="#1b1b1b" stroke-width="1"/>
+    <rect x="186" y="248" width="28" height="2" fill="#9ad07f"/>
+    <text x="240" y="252" font-size="9" fill="#555555">power-up remaining (hidden when inactive)</text>
     <line x1="52" y1="258" x2="414" y2="258" stroke="#cc4444" stroke-width="1.5" stroke-dasharray="5 4"/>
     <text x="58" y="271" font-size="9" fill="#cc4444">dead zone trigger — ball below this line costs a life</text>
     <text x="225" y="200" font-size="10" fill="#555555" text-anchor="middle">"PRESS SPACE TO LAUNCH" (serve state only)</text>

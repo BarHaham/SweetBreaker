@@ -20,10 +20,6 @@ namespace SweetBreaker
         [SerializeField, Tooltip("One candy per life, removed from the last one down.")]
         private Image[] lifeIcons;
         [SerializeField] private GameObject servePrompt;
-        [SerializeField] private PaddleController paddle;
-        [SerializeField, Tooltip("Hidden whenever no power-up is active.")]
-        private GameObject powerUpBar;
-        [SerializeField] private RectTransform powerUpBarFill;
         [SerializeField, Tooltip("LEVEL n CLEAR: a beat, not a screen. No buttons, no input.")]
         private TMP_Text levelClearBanner;
 
@@ -42,12 +38,8 @@ namespace SweetBreaker
         [SerializeField] private Button playAgainButton;
         [SerializeField] private Button endMainMenuButton;
 
-        private float powerUpBarFullWidth;
-
         private void Awake()
         {
-            powerUpBarFullWidth = powerUpBarFill.sizeDelta.x;
-
             resumeButton.onClick.AddListener(() => GameManager.Instance.Resume());
             restartRunButton.onClick.AddListener(() => GameManager.Instance.StartNewRun());
             pauseMainMenuButton.onClick.AddListener(() => GameManager.Instance.ReturnToMainMenu());
@@ -85,10 +77,6 @@ namespace SweetBreaker
 
         private void Update()
         {
-            float timeLeft = paddle.ExpansionTimeLeft01;
-            powerUpBar.SetActive(timeLeft > 0f);
-            powerUpBarFill.sizeDelta = new Vector2(powerUpBarFullWidth * timeLeft, powerUpBarFill.sizeDelta.y);
-
             if (pauseScreen.activeSelf)
                 MenuFocus.RestoreOnKeyboardInput(resumeButton.gameObject);
             else if (endScreen.activeSelf && playAgainButton.interactable)

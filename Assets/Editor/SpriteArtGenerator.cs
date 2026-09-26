@@ -33,6 +33,7 @@ namespace SweetBreaker.EditorTools
             DrawPaddle();
             DrawBall();
             DrawCapsule();
+            DrawTimerBar();
             DrawWallTile();
             DrawBackground();
 
@@ -220,6 +221,19 @@ namespace SweetBreaker.EditorTools
             canvas.Save("PowerUpCapsule");
         }
 
+        /// <summary>
+        /// The power-up timer under the paddle: a white pill (0.4 x 0.12 u) that the SpriteRenderer
+        /// tints. It is 9-sliced along X, so it stretches to any width and keeps its round ends.
+        /// </summary>
+        private static void DrawTimerBar()
+        {
+            var canvas = new Canvas(40, 12);
+            Vector2 c = canvas.Centre;
+            canvas.Fill(p => Sdf.RoundedRect(p, c, new Vector2(19.5f, 5.5f), 5.5f), p => Color.Lerp(Hex("#D6D6D6"), Color.white, (p.y - c.y + 5.5f) / 11f));
+            canvas.Fill(p => Sdf.RoundedRect(p, c + new Vector2(0f, 2.5f), new Vector2(15f, 1.2f), 1.2f), WithAlpha(Color.white, 0.8f));
+            canvas.Save("TimerBar");
+        }
+
         // ---------------------------------------------------------------- walls and background
 
         /// <summary>A wafer tile with grooved cross-hatching; it tiles seamlessly every 50 px.</summary>
@@ -283,7 +297,7 @@ namespace SweetBreaker.EditorTools
                 string file = Path.GetFileNameWithoutExtension(path);
                 var importer = (TextureImporter)AssetImporter.GetAtPath(path);
                 bool isBackground = file == "Background";
-                bool needsFullRect = file == "Paddle" || file == "WallTile" || file == "UIRounded";
+                bool needsFullRect = file == "Paddle" || file == "WallTile" || file == "UIRounded" || file == "TimerBar";
 
                 importer.textureType = TextureImporterType.Sprite;
                 importer.spriteImportMode = SpriteImportMode.Single;
@@ -300,9 +314,12 @@ namespace SweetBreaker.EditorTools
                 settings.spriteMeshType = needsFullRect ? SpriteMeshType.FullRect : SpriteMeshType.Tight;
                 importer.SetTextureSettings(settings);
 
-                // 9-slice borders: the paddle's foil ends, and the UI panel's rounded corners.
+                // 9-slice borders: the paddle's foil ends, the timer bar's round ends, and the UI
+                // panel's rounded corners.
                 if (file == "Paddle")
                     importer.spriteBorder = new Vector4(26, 0, 26, 0);
+                if (file == "TimerBar")
+                    importer.spriteBorder = new Vector4(6, 0, 6, 0);
                 if (file == "UIRounded")
                     importer.spriteBorder = new Vector4(24, 24, 24, 24);
 
