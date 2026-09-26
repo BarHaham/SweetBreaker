@@ -14,7 +14,7 @@
 | **Engine / Unity version** | Unity **6000.3.20f1** (Unity 6.3 LTS), 2D — the exact version required by the course. No other editor version is used. Render pipeline: URP 2D (the Universal 2D template). |
 | **Orientation & reference resolution** | Landscape, 1920 × 1080 reference. Supported aspect ratios: 16:9, 16:10, 4:3 and 21:9 (see §5) |
 | **Expected session length** | 3–6 minutes for a full three-level run (initial estimate) |
-| **Document version** | v0.8 — 2026-09-26 |
+| **Document version** | v0.9 — 2026-09-26 |
 
 ---
 
@@ -113,8 +113,12 @@ settled in §8, not here.
   `MovePosition` in `FixedUpdate`; input is sampled in `Update`. Its X is clamped so that the
   paddle's left and right edges stay inside the side walls — the clamp is recomputed whenever the
   paddle width changes, so an expanded paddle cannot be pushed through a wall. A held key ramps
-  the paddle up to `paddleSpeed` over `paddleAccelerationTime`, so a tap is a small adjustment;
-  releasing the key or reversing stops it at once. The mouse is followed at `paddleSpeed`.
+  the paddle up to `paddleKeyboardSpeed` over `paddleAccelerationTime`, so a tap is a small
+  adjustment; releasing the key or reversing stops it at once. The mouse is followed at up to
+  `paddleSpeed`, a cap rather than a pace, since the hand sets the speed below it. The two speeds
+  differ on purpose: a held key always runs flat out and overshoots by the player's release time,
+  while the mouse stops exactly under the cursor. The trade-off is that a ball deflected late and
+  far can be reachable with the mouse but not with the keys.
 - **Ball launch.** After a serve the ball sits locked to the paddle's centre and moves with it.
   Launch input releases it at `launchAngle` (60° above horizontal) toward the side the paddle was
   last moving; if the paddle is stationary it launches up and to the right. There is no aiming
@@ -179,11 +183,12 @@ first guesses to reach for, not results. Units are Unity world units (u) unless 
 
 | Parameter | What it controls | First guess |
 |---|---|---|
-| `paddleSpeed` | How fast the paddle crosses the screen — the main "can I reach it?" dial | 18 u/s, cut to 12 u/s after our own first playtest (too fast to control); still above the ball's 7.7 u/s top sideways speed |
-| `paddleAccelerationTime` | How long a held key takes to reach `paddleSpeed` — fine control on a tap (added after the same playtest) | 0.12 s |
+| `paddleSpeed` | The cap on how fast the paddle chases the mouse cursor; the hand sets the pace below it | 18 u/s, cut to 12 u/s after our own first playtest; the mouse felt right there |
+| `paddleKeyboardSpeed` | How fast a held key moves the paddle — the main "can I reach it?" dial for keyboard players; keep it well above the ball's 7.7 u/s top sideways speed | 9 u/s (second playtest: 12 u/s was still very fast on the keys); the paddle's 12.8 u of travel takes about 1.5 s |
+| `paddleAccelerationTime` | How long a held key takes to reach `paddleKeyboardSpeed` — fine control on a tap | 0.12 s, then 0.15 s |
 | `paddleWidth` | Base paddle width; trades directly against `maxBounceAngle` for how hard aiming is | 2.2 u |
 | `paddleExpandMultiplier` | How much wider the power-up makes the paddle | 1.5 × |
-| `ballSpeed` | Constant ball speed — the main difficulty dial; changing it always means re-checking `paddleSpeed` | 8 u/s |
+| `ballSpeed` | Constant ball speed — the main difficulty dial; changing it always means re-checking `paddleKeyboardSpeed` | 8 u/s |
 | `launchAngle` | Angle above horizontal for the serve | 60° |
 | `maxBounceAngle` | Angle from vertical at a full edge hit — how much aim the paddle gives | 75° |
 | `minVerticalSpeedFraction` | Below this fraction of `ballSpeed`, the anti-stall nudge kicks in | 0.25 |
@@ -214,7 +219,8 @@ that component.
 **Feel target (for future playtesting, not a claim):** we will put the build in front of five
 classmates who have not seen it. The target is that **at least three of them clear level 1 within
 their first three runs**, and that nobody reports losing a life to a ball they could not physically
-reach at `paddleSpeed`. If either fails, `ballSpeed` and `paddleSpeed` are the first two knobs.
+reach with the paddle, on the keys or the mouse. If either fails, `ballSpeed` and
+`paddleKeyboardSpeed` are the first two knobs.
 
 ---
 
@@ -543,6 +549,7 @@ and Addressables or any asset-streaming system (there are three level prefabs).
 | v0.6 | 2026-09-25 | Implementation recorded. Every MVP and polish item in §8 is built except the real Windows-build check. Render pipeline settled as URP 2D. The camera-fit formula in §5 now shows the shake margin that §1 and §6 already assumed, and the background is 26 × 14 u to cover it. §6's asset table records the actual sources: all art and sound is our own, and the only third-party asset is TextMesh Pro's Liberation Sans (SIL OFL 1.1); the menu music is cut. §7's table moves the expansion timer from the capsule to the paddle, since the capsule is destroyed when caught, and lists `MainMenuUI` and `Shard`. No gameplay rule changes. |
 | v0.7 | 2026-09-26 | Art pass. The sprites are redrawn to match the visual direction in this section (wrapped candies, 4 × 2 chocolate bars with a clearly broken cracked state, a gingham counter with a sprinkled tray) by an editor tool, `SpriteArtGenerator`, so their origin is in the repository. Recorded the drop-shadow margins and the Global Light 2D rule in the technical art rules. No gameplay rule changes. |
 | v0.8 | 2026-09-26 | Tuning after our own first playtest, where the paddle was too fast to control: `paddleSpeed` goes from 18 to 12 u/s, and a new `paddleAccelerationTime` (0.12 s) ramps the keyboard up to it. The same playtest found a ball stuck to the side of a moving paddle and squeezed up the wall; §3's paddle rebound now says what a side hit does (the ball glances off and is missed), which the rule had left open. Scoring, lives, levels and the power-up are unchanged. |
+| v0.9 | 2026-09-26 | Second playtest: the keys were still very fast while the mouse felt right. The mouse moves at the hand's pace with `paddleSpeed` only as its cap, but a held key always runs at full speed, so the keyboard now has its own speed: a new `paddleKeyboardSpeed` of 9 u/s, with `paddleAccelerationTime` going from 0.12 to 0.15 s, while `paddleSpeed` stays 12 u/s for the mouse. §3 states the trade-off. Scoring, lives, levels and the power-up are unchanged. |
 
 ---
 

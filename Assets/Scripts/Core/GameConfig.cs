@@ -10,11 +10,14 @@ namespace SweetBreaker
     public class GameConfig : ScriptableObject
     {
         [field: Header("Paddle")]
-        [field: SerializeField, Tooltip("How fast the paddle crosses the screen (u/s).")]
+        [field: SerializeField, Tooltip("Top speed when following the mouse (u/s). A cap rather than a pace: the hand sets the speed below it.")]
         public float PaddleSpeed { get; private set; } = 12f;
 
-        [field: SerializeField, Tooltip("How long a held key takes to bring the paddle up to full speed (s). A tap only nudges it.")]
-        public float PaddleAccelerationTime { get; private set; } = 0.12f;
+        [field: SerializeField, Tooltip("Speed while a movement key is held (u/s). Keep it well above the ball's top sideways speed, BallSpeed x sin(MaxBounceAngle).")]
+        public float PaddleKeyboardSpeed { get; private set; } = 9f;
+
+        [field: SerializeField, Tooltip("How long a held key takes to bring the paddle up to PaddleKeyboardSpeed (s). A tap only nudges it.")]
+        public float PaddleAccelerationTime { get; private set; } = 0.15f;
 
         [field: SerializeField, Tooltip("Base paddle width (u).")]
         public float PaddleWidth { get; private set; } = 2.2f;
@@ -23,7 +26,7 @@ namespace SweetBreaker
         public float PaddleExpandMultiplier { get; private set; } = 1.5f;
 
         [field: Header("Ball")]
-        [field: SerializeField, Tooltip("Constant ball speed (u/s). Re-check PaddleSpeed whenever this changes.")]
+        [field: SerializeField, Tooltip("Constant ball speed (u/s). Re-check PaddleKeyboardSpeed whenever this changes.")]
         public float BallSpeed { get; private set; } = 8f;
 
         [field: SerializeField, Tooltip("Angle above horizontal for the serve (degrees).")]

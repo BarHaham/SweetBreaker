@@ -182,30 +182,32 @@ namespace SweetBreaker
 
         private void Move()
         {
-            float maxStep = config.PaddleSpeed * Time.fixedDeltaTime;
             float currentX = rb.position.x;
             float keyboardStep = KeyboardSpeed() * Time.fixedDeltaTime;
-            float targetX = mouseOwnsPaddle ? mouseTargetX : currentX + keyboardStep;
 
-            // The mouse is followed at PaddleSpeed too, so both controls reach the same balls.
-            float newX = Mathf.Clamp(Mathf.MoveTowards(currentX, targetX, maxStep), MinX, MaxX);
+            // The hand sets the mouse's pace, so PaddleSpeed is only a cap on it. A held key always
+            // runs flat out, so the keyboard gets its own, lower speed (GDD section 3).
+            float targetX = mouseOwnsPaddle
+                ? Mathf.MoveTowards(currentX, mouseTargetX, config.PaddleSpeed * Time.fixedDeltaTime)
+                : currentX + keyboardStep;
+            float newX = Mathf.Clamp(targetX, MinX, MaxX);
 
             MoveDirection = Mathf.Approximately(newX, currentX) ? 0 : (int)Mathf.Sign(newX - currentX);
             rb.MovePosition(new Vector2(newX, rb.position.y));
         }
 
         /// <summary>
-        /// A held key ramps up to PaddleSpeed over PaddleAccelerationTime, so a tap is a fine
+        /// A held key ramps up to PaddleKeyboardSpeed over PaddleAccelerationTime, so a tap is a fine
         /// adjustment. Letting go or turning round stops the paddle at once.
         /// </summary>
         private float KeyboardSpeed()
         {
-            float targetSpeed = keyboardAxis * config.PaddleSpeed;
+            float targetSpeed = keyboardAxis * config.PaddleKeyboardSpeed;
             bool turningRound = keyboardSpeed * targetSpeed < 0f;
             if (keyboardAxis == 0f || turningRound)
                 keyboardSpeed = 0f;
 
-            float acceleration = config.PaddleSpeed / Mathf.Max(config.PaddleAccelerationTime, Time.fixedDeltaTime);
+            float acceleration = config.PaddleKeyboardSpeed / Mathf.Max(config.PaddleAccelerationTime, Time.fixedDeltaTime);
             keyboardSpeed = Mathf.MoveTowards(keyboardSpeed, targetSpeed, acceleration * Time.fixedDeltaTime);
             return keyboardSpeed;
         }

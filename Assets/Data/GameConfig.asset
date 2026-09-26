@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: GameConfig
   m_EditorClassIdentifier: Assembly-CSharp::SweetBreaker.GameConfig
   <PaddleSpeed>k__BackingField: 12
-  <PaddleAccelerationTime>k__BackingField: 0.12
+  <PaddleKeyboardSpeed>k__BackingField: 9
+  <PaddleAccelerationTime>k__BackingField: 0.15
   <PaddleWidth>k__BackingField: 2.2
   <PaddleExpandMultiplier>k__BackingField: 1.5
   <BallSpeed>k__BackingField: 8
