@@ -14,7 +14,7 @@
 | **Engine / Unity version** | Unity **6000.3.20f1** (Unity 6.3 LTS), 2D — the exact version required by the course. No other editor version is used. Render pipeline: URP 2D (the Universal 2D template). |
 | **Orientation & reference resolution** | Landscape, 1920 × 1080 reference. Supported aspect ratios: 16:9, 16:10, 4:3 and 21:9 (see §5) |
 | **Expected session length** | 3–6 minutes for a full three-level run (initial estimate) |
-| **Document version** | v0.6 — 2026-09-25 |
+| **Document version** | v0.7 — 2026-09-26 |
 
 ---
 
@@ -309,12 +309,12 @@ licence to track for them. The only third-party asset is the UI font that ships 
 
 | Asset | Variants / frames | Source & licence | Use | Status |
 |---|---|---|---|---|
-| Candy brick sprite | 3 colours × 1 state | Own art, drawn in the editor | One-hit bricks | Done (placeholder quality) |
-| Chocolate brick sprite | 1 colour × 2 states (intact, cracked) | Own art, drawn in the editor | Two-hit bricks | Done (placeholder quality) |
+| Candy brick sprite | 3 colours × 1 state | Own art, drawn by `Assets/Editor/SpriteArtGenerator.cs`: a glossy striped candy with crimped wrapper ends | One-hit bricks | Done |
+| Chocolate brick sprite | 1 colour × 2 states (intact, cracked) | Own art, same generator: a bar scored into 4 × 2 squares; cracked = lighter body, deep crack showing the inside, and a bitten-off corner | Two-hit bricks | Done |
 | Paddle sprite | 1, 9-sliced so the power-up stretches the body and not the ends | Own art, drawn in the editor | Player paddle | Done |
 | Ball sprite | 1 | Own art, drawn in the editor | Ball | Done |
 | Power-up capsule sprite | 1 | Own art, drawn in the editor | Paddle expansion pickup | Done |
-| Background | 1, 2600 × 1400 px (26 × 14 u) | Own art, drawn in the editor | Play area backdrop | Done |
+| Background | 1, 2600 × 1400 px (26 × 14 u) | Own art, same generator: a pink gingham counter with a lighter, faintly sprinkled tray under the play field | Play area backdrop | Done |
 | Wall tile, life icon, UI panel | 1 each | Own art, drawn in the editor | Walls, HUD lives, buttons and panels | Done |
 | Brick-break particle | 1 small burst | Unity built-in particle system, own material and sprite | Break feedback | Done |
 | Chocolate / candy shard sprites | 3 white shapes, tinted per brick | Own art, drawn in the editor | Pooled break fragments | Done |
@@ -333,7 +333,10 @@ made public, every unverified asset would be replaced first.
 (the style is not pixel art); one `SpriteAtlas` for the whole game; the paddle sprite 9-sliced with
 borders set in the Sprite Editor so the power-up changes `Size` and never `Scale` — the Session 7
 "no 9-slice" pitfall, which would otherwise smear the paddle's rounded ends. Sorting layers, back
-to front: `Background → Bricks → PowerUps → Ball → Paddle → VFX → UI`.
+to front: `Background → Bricks → PowerUps → Ball → Paddle → VFX → UI`. Bricks, ball and capsule
+carry a soft drop shadow in an 8 px transparent margin, so the sprite is larger than the collider;
+the paddle's margin is vertical only, so its 9-sliced width is still exactly the paddle's width.
+URP 2D lights sprites, so the scenes' Global Light 2D must target every one of these sorting layers.
 
 **Impact feedback (the game's one showpiece).** Breaking a brick is the action the player repeats
 hundreds of times, so it is the one moment worth making expensive-feeling. Four things fire together:
@@ -531,6 +534,7 @@ and Addressables or any asset-streaming system (there are three level prefabs).
 | v0.4 | 2026-09-19 | Unity project created from the Universal 2D template (URP, 6000.3.20f1). Set Active Input Handling to Both so the legacy Input Manager in §4 actually works. |
 | v0.5 | 2026-09-25 | Added the impact pack — hit-stop, bounded screen shake, pooled shards, paddle squash and last-brick slow motion — with its tuning parameters, the `ImpactFeedback` script and the pause interaction rule. No gameplay rule changes: scoring, lives, brick damage and the power-up are exactly as approved. Reworded pillar 1 so the bounded shake does not contradict it. |
 | v0.6 | 2026-09-25 | Implementation recorded. Every MVP and polish item in §8 is built except the real Windows-build check. Render pipeline settled as URP 2D. The camera-fit formula in §5 now shows the shake margin that §1 and §6 already assumed, and the background is 26 × 14 u to cover it. §6's asset table records the actual sources: all art and sound is our own, and the only third-party asset is TextMesh Pro's Liberation Sans (SIL OFL 1.1); the menu music is cut. §7's table moves the expansion timer from the capsule to the paddle, since the capsule is destroyed when caught, and lists `MainMenuUI` and `Shard`. No gameplay rule changes. |
+| v0.7 | 2026-09-26 | Art pass. The sprites are redrawn to match the visual direction in this section (wrapped candies, 4 × 2 chocolate bars with a clearly broken cracked state, a gingham counter with a sprinkled tray) by an editor tool, `SpriteArtGenerator`, so their origin is in the repository. Recorded the drop-shadow margins and the Global Light 2D rule in the technical art rules. No gameplay rule changes. |
 
 ---
 
