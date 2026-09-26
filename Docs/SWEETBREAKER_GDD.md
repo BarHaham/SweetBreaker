@@ -14,7 +14,7 @@
 | **Engine / Unity version** | Unity **6000.3.20f1** (Unity 6.3 LTS), 2D — the exact version required by the course. No other editor version is used. Render pipeline: URP 2D (the Universal 2D template). |
 | **Orientation & reference resolution** | Landscape, 1920 × 1080 reference. Supported aspect ratios: 16:9, 16:10, 4:3 and 21:9 (see §5) |
 | **Expected session length** | 3–6 minutes for a full three-level run (initial estimate) |
-| **Document version** | v0.7 — 2026-09-26 |
+| **Document version** | v0.8 — 2026-09-26 |
 
 ---
 
@@ -112,7 +112,9 @@ settled in §8, not here.
   rotates and never moves vertically. It is a *kinematic* `Rigidbody2D` moved with
   `MovePosition` in `FixedUpdate`; input is sampled in `Update`. Its X is clamped so that the
   paddle's left and right edges stay inside the side walls — the clamp is recomputed whenever the
-  paddle width changes, so an expanded paddle cannot be pushed through a wall.
+  paddle width changes, so an expanded paddle cannot be pushed through a wall. A held key ramps
+  the paddle up to `paddleSpeed` over `paddleAccelerationTime`, so a tap is a small adjustment;
+  releasing the key or reversing stops it at once. The mouse is followed at `paddleSpeed`.
 - **Ball launch.** After a serve the ball sits locked to the paddle's centre and moves with it.
   Launch input releases it at `launchAngle` (60° above horizontal) toward the side the paddle was
   last moving; if the paddle is stationary it launches up and to the right. There is no aiming
@@ -173,7 +175,8 @@ first guesses to reach for, not results. Units are Unity world units (u) unless 
 
 | Parameter | What it controls | First guess |
 |---|---|---|
-| `paddleSpeed` | How fast the paddle crosses the screen — the main "can I reach it?" dial | 18 u/s |
+| `paddleSpeed` | How fast the paddle crosses the screen — the main "can I reach it?" dial | 18 u/s, cut to 12 u/s after our own first playtest (too fast to control); still above the ball's 7.7 u/s top sideways speed |
+| `paddleAccelerationTime` | How long a held key takes to reach `paddleSpeed` — fine control on a tap (added after the same playtest) | 0.12 s |
 | `paddleWidth` | Base paddle width; trades directly against `maxBounceAngle` for how hard aiming is | 2.2 u |
 | `paddleExpandMultiplier` | How much wider the power-up makes the paddle | 1.5 × |
 | `ballSpeed` | Constant ball speed — the main difficulty dial; changing it always means re-checking `paddleSpeed` | 8 u/s |
@@ -535,6 +538,7 @@ and Addressables or any asset-streaming system (there are three level prefabs).
 | v0.5 | 2026-09-25 | Added the impact pack — hit-stop, bounded screen shake, pooled shards, paddle squash and last-brick slow motion — with its tuning parameters, the `ImpactFeedback` script and the pause interaction rule. No gameplay rule changes: scoring, lives, brick damage and the power-up are exactly as approved. Reworded pillar 1 so the bounded shake does not contradict it. |
 | v0.6 | 2026-09-25 | Implementation recorded. Every MVP and polish item in §8 is built except the real Windows-build check. Render pipeline settled as URP 2D. The camera-fit formula in §5 now shows the shake margin that §1 and §6 already assumed, and the background is 26 × 14 u to cover it. §6's asset table records the actual sources: all art and sound is our own, and the only third-party asset is TextMesh Pro's Liberation Sans (SIL OFL 1.1); the menu music is cut. §7's table moves the expansion timer from the capsule to the paddle, since the capsule is destroyed when caught, and lists `MainMenuUI` and `Shard`. No gameplay rule changes. |
 | v0.7 | 2026-09-26 | Art pass. The sprites are redrawn to match the visual direction in this section (wrapped candies, 4 × 2 chocolate bars with a clearly broken cracked state, a gingham counter with a sprinkled tray) by an editor tool, `SpriteArtGenerator`, so their origin is in the repository. Recorded the drop-shadow margins and the Global Light 2D rule in the technical art rules. No gameplay rule changes. |
+| v0.8 | 2026-09-26 | Tuning after our own first playtest, where the paddle was too fast to control: `paddleSpeed` goes from 18 to 12 u/s, and a new `paddleAccelerationTime` (0.12 s) ramps the keyboard up to it. Scoring, lives, levels and the power-up are unchanged. |
 
 ---
 

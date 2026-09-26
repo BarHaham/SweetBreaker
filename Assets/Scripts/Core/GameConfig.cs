@@ -11,7 +11,10 @@ namespace SweetBreaker
     {
         [field: Header("Paddle")]
         [field: SerializeField, Tooltip("How fast the paddle crosses the screen (u/s).")]
-        public float PaddleSpeed { get; private set; } = 18f;
+        public float PaddleSpeed { get; private set; } = 12f;
+
+        [field: SerializeField, Tooltip("How long a held key takes to bring the paddle up to full speed (s). A tap only nudges it.")]
+        public float PaddleAccelerationTime { get; private set; } = 0.12f;
 
         [field: SerializeField, Tooltip("Base paddle width (u).")]
         public float PaddleWidth { get; private set; } = 2.2f;

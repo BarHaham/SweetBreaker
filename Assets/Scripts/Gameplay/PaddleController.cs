@@ -23,6 +23,7 @@ namespace SweetBreaker
         private Camera cam;
 
         private float keyboardAxis;
+        private float keyboardSpeed;
         private bool mouseOwnsPaddle;
         private float mouseTargetX;
         private Vector3 lastMousePosition;
@@ -93,6 +94,7 @@ namespace SweetBreaker
             // The mouse moving while the game is paused (or alt-tabbed) must not take the paddle over
             // on resume, so only movement during play counts.
             keyboardAxis = 0f;
+            keyboardSpeed = 0f;
             lastMousePosition = Input.mousePosition;
         }
 
@@ -157,6 +159,7 @@ namespace SweetBreaker
             transform.position = rb.position;
             mouseOwnsPaddle = false;
             lastMousePosition = Input.mousePosition;
+            keyboardSpeed = 0f;
             MoveDirection = 0;
         }
 
@@ -181,13 +184,30 @@ namespace SweetBreaker
         {
             float maxStep = config.PaddleSpeed * Time.fixedDeltaTime;
             float currentX = rb.position.x;
-            float targetX = mouseOwnsPaddle ? mouseTargetX : currentX + keyboardAxis * maxStep;
+            float keyboardStep = KeyboardSpeed() * Time.fixedDeltaTime;
+            float targetX = mouseOwnsPaddle ? mouseTargetX : currentX + keyboardStep;
 
             // The mouse is followed at PaddleSpeed too, so both controls reach the same balls.
             float newX = Mathf.Clamp(Mathf.MoveTowards(currentX, targetX, maxStep), MinX, MaxX);
 
             MoveDirection = Mathf.Approximately(newX, currentX) ? 0 : (int)Mathf.Sign(newX - currentX);
             rb.MovePosition(new Vector2(newX, rb.position.y));
+        }
+
+        /// <summary>
+        /// A held key ramps up to PaddleSpeed over PaddleAccelerationTime, so a tap is a fine
+        /// adjustment. Letting go or turning round stops the paddle at once.
+        /// </summary>
+        private float KeyboardSpeed()
+        {
+            float targetSpeed = keyboardAxis * config.PaddleSpeed;
+            bool turningRound = keyboardSpeed * targetSpeed < 0f;
+            if (keyboardAxis == 0f || turningRound)
+                keyboardSpeed = 0f;
+
+            float acceleration = config.PaddleSpeed / Mathf.Max(config.PaddleAccelerationTime, Time.fixedDeltaTime);
+            keyboardSpeed = Mathf.MoveTowards(keyboardSpeed, targetSpeed, acceleration * Time.fixedDeltaTime);
+            return keyboardSpeed;
         }
 
         private void SetWidth(float width)
