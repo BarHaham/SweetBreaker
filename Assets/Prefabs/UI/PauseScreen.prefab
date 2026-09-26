@@ -224,6 +224,8 @@ GameObject:
   - component: {fileID: 2297295447193419946}
   - component: {fileID: 8139497509971263981}
   - component: {fileID: 6260164621783653288}
+  - component: {fileID: 535397129725854528}
+  - component: {fileID: 5988222086355990034}
   m_Layer: 0
   m_Name: Panel
   m_TagString: Untagged
@@ -292,6 +294,36 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &535397129725854528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7707639030653348031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 1, g: 0.56078434, b: 0.72156864, a: 1}
+  m_EffectDistance: {x: 6, y: -6}
+  m_UseGraphicAlpha: 0
+--- !u!114 &5988222086355990034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7707639030653348031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Shadow
+  m_EffectColor: {r: 0.24, g: 0.12, b: 0.06, a: 0.35}
+  m_EffectDistance: {x: 0, y: -14}
+  m_UseGraphicAlpha: 1
 --- !u!1001 &1953126858132201256
 PrefabInstance:
   m_ObjectHideFlags: 0
