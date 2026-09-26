@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="980" height="740" viewBox="0 0 980 740" font-family="Segoe UI, Helvetica, Arial, sans-serif">
   <rect width="980" height="740" fill="#ffffff"/>
   <text x="20" y="30" font-size="19" font-weight="600" fill="#1b1b1b">Sweet Breaker — screen wireframes (16:9, 1920 × 1080 reference)</text>
-  <text x="20" y="48" font-size="12" fill="#666666">Original planning sketch. Not a screenshot — nothing here is implemented.</text>
+  <text x="20" y="48" font-size="12" fill="#666666">Layout wireframe: first drawn as the planning sketch, revised through GDD v0.10. Not a screenshot; see images/screenshots/.</text>
 
   <!-- ============ A: MAIN MENU ============ -->
   <g transform="translate(20,70)">
