@@ -342,7 +342,7 @@ MonoBehaviour:
   m_text: '<size=46><b>CONTROLS</b></size>
 
     <line-height=140%><b>Move</b>  A
-    / D, arrow keys or the mouse
+    / D, arrows or mouse
 
     <b>Launch</b>  Space or left click
 
@@ -2315,7 +2315,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -185}
-  m_SizeDelta: {x: 1000, y: 60}
+  m_SizeDelta: {x: 1060, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1321641170
 MonoBehaviour:
@@ -2365,8 +2365,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
+  m_fontSize: 28
+  m_fontSizeBase: 28
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
