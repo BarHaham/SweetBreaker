@@ -204,6 +204,11 @@ namespace SweetBreaker
         private IEnumerator ServeAfterDelay()
         {
             yield return new WaitForSeconds(config.ServeDelay);
+
+            // A pause pressed in the very frame the delay ran out must win; the serve waits for Resume.
+            while (State == GameState.Paused)
+                yield return null;
+
             serveRoutine = null;
             BeginServe();
         }
